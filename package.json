@@ -1,0 +1,44 @@
+{
+  "name": "su-drone",
+  "version": "1.0.0",
+  "description": "",
+  "private": "true",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm dist/bundle.js",
+    "dev": "parcel serve public/index.html --port 3000",
+    "build": "parcel build public/index.html --public-url /su-drone",
+    "deploy": "gh-pages -d dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nidnogg/su-drone.git"
+  },
+  "keywords": [
+    "su",
+    "drone"
+  ],
+  "author": "nidnogg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nidnogg/su-drone/issues"
+  },
+  "homepage": "https://github.com/Nidnogg/su-drone",
+  "dependencies": {
+    "@svgr/parcel-plugin-svgr": "^4.3.3",
+    "css": "^2.2.4",
+    "gh-pages": "^3.1.0",
+    "gsap": "^3.2.4",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-spring": "^8.0.27",
+    "react-svg": "^10.0.26"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@svgr/cli": "^5.2.0",
+    "parcel-bundler": "^1.12.4"
+  }
+}
