@@ -35936,9 +35936,9 @@ var App = function App() {
     ref: menuContentDiv,
     className: "main-menu-content"
   }, _react.default.createElement("p", null, "Hey Su! This is a little bit differrent from a heartfelt note, but it is heartfelt nonetheless. Welcome to Su Drone, your own little ", _react.default.createElement("a", {
-    href: "https://imgur.com/a/jHK9NIO"
+    href: "https://imgur.com/a/6X806J5"
   }, "poster"), " website on the internet. I hope today is the happiest birthday you can get your hands on. ", _react.default.createElement("br", null), "Have a sweet birthday cake on me \uD83C\uDF82. You're our finest ", _react.default.createElement("a", {
-    href: "https://www.patreon.com/nidnog"
+    href: "https://www.patreon.com/nidnogg"
   }, "Patreon."), _react.default.createElement("br", null), "You will always be a ", _react.default.createElement("a", {
     href: "https://www.youtube.com/watch?v=NA6OCGLCUec"
   }, "Golden Lady"), " and the ", _react.default.createElement("a", {
@@ -36017,7 +36017,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59436" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54362" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
