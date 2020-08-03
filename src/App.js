@@ -71,9 +71,9 @@ const App = () => {
         <div ref={menuContentDiv} className="main-menu-content">
           <p>
             Hey Su! This is a little bit differrent from a heartfelt note, but it is heartfelt
-            nonetheless. Welcome to Su Drone, your own little <a href="https://imgur.com/a/jHK9NIO">poster</a> website on the internet. I hope
+            nonetheless. Welcome to Su Drone, your own little <a href="https://imgur.com/a/6X806J5">poster</a> website on the internet. I hope
             today is the happiest birthday you can get your hands on. <br/> 
-            Have a sweet birthday cake on me &#127874;. You're our finest <a href="https://www.patreon.com/nidnog">Patreon.</a><br/> 
+            Have a sweet birthday cake on me &#127874;. You're our finest <a href="https://www.patreon.com/nidnogg">Patreon.</a><br/> 
             You will always be a <a href="https://www.youtube.com/watch?v=NA6OCGLCUec">Golden Lady</a> and the <a href="https://www.youtube.com/watch?v=eKQuwAmIVKA">Queen</a> of Convenience.
             The songs are by our dearest pal Stevie Wonder. Thanks Stevie for making Su a happy little birthday!<br />
             Check out our <a href="https://soundcloud.com/nidnogg">soundcloud!</a> <br/>
