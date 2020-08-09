@@ -65,7 +65,7 @@ const App = () => {
       <div id="poster"></div>
       <section ref={menu} className="main-menu-section">
         <div ref={menuHeaderDiv} className="main-menu-header">
-            <span ref={menuHeader} className="menu-header">su drone</span> <span className="ver-num" ref={verNum}>v1.0</span>     
+            <span ref={menuHeader} className="menu-header">cylo drone</span> <span className="ver-num" ref={verNum}>v1.0</span>     
         </div>
         
         <div ref={menuContentDiv} className="main-menu-content">
