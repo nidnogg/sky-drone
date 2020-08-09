@@ -457,8 +457,8 @@ svg {
   position: absolute;
   right: 100px;
   bottom: 0px;
-  width: 90%;
+  width: 100%;
   height: 1000px;
-  background-image: url('https://i.imgur.com/erFYWIj.png');
+  background-image: url('https://i.imgur.com/Lkszjvf.png');
   z-index: 0;
 }

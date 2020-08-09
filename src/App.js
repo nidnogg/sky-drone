@@ -70,15 +70,11 @@ const App = () => {
         
         <div ref={menuContentDiv} className="main-menu-content">
           <p>
-            Hey Su! This is a little bit differrent from a heartfelt note, but it is heartfelt
-            nonetheless. Welcome to Su Drone, your own little <a href="https://imgur.com/a/6X806J5">poster</a> website on the internet. I hope
-            today is the happiest birthday you can get your hands on. <br/> 
-            Have a sweet birthday cake on me &#127874;. You're our finest <a href="https://www.patreon.com/nidnogg">Patreon.</a><br/> 
-            You will always be a <a href="https://www.youtube.com/watch?v=NA6OCGLCUec">Golden Lady</a> and the <a href="https://www.youtube.com/watch?v=eKQuwAmIVKA">Queen</a> of Convenience.
-            The songs are by our dearest pal Stevie Wonder. Thanks Stevie for making Su a happy little birthday!<br />
-            Check out our <a href="https://soundcloud.com/nidnogg">soundcloud!</a> <br/>
-            Also inspired by Docubyte's phenomenal <a href="https://www.docubyte.com/works/guide-to-computing/">Guide to Computing.</a> Cheers from your family and Henrique!
-            PS: Papura alpha is <a href="https://papura.vercel.app/">live</a>!
+            Hi I'm <a href="https://imgur.com/a/wbvDxuy">the Cylo Drone.</a> <br />
+            If you don't know who I am, you're missing out. I'm <a href="https://nidnogg.github.io/mood-drone/">nidnogg's</a> dad and I rock and I roll.
+            And today is father's day. Awesome! I am a <a href="https://br.linkedin.com/in/cylotoledo">creative director.</a> <br />
+            Cheers from the cyber <a href="https://the-cyber-artnet.vercel.app/">artweb.</a>  <br />
+            Songs are from nidnogg's <a href="https://soundcloud.com/nidnogg">soundcloud</a> and the <a href="https://www.youtube.com/channel/UC8sdN6rOzGrCHDIDHTK_2KA">vinyl frontier.</a>
           </p>
         </div>
       </section>
