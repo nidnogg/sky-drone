@@ -35935,21 +35935,19 @@ var App = function App() {
   }, "v1.0")), _react.default.createElement("div", {
     ref: menuContentDiv,
     className: "main-menu-content"
-  }, _react.default.createElement("p", null, "Hey Su! This is a little bit differrent from a heartfelt note, but it is heartfelt nonetheless. Welcome to Su Drone, your own little ", _react.default.createElement("a", {
-    href: "https://imgur.com/a/6X806J5"
-  }, "poster"), " website on the internet. I hope today is the happiest birthday you can get your hands on. ", _react.default.createElement("br", null), "Have a sweet birthday cake on me \uD83C\uDF82. You're our finest ", _react.default.createElement("a", {
-    href: "https://www.patreon.com/nidnogg"
-  }, "Patreon."), _react.default.createElement("br", null), "You will always be a ", _react.default.createElement("a", {
-    href: "https://www.youtube.com/watch?v=NA6OCGLCUec"
-  }, "Golden Lady"), " and the ", _react.default.createElement("a", {
-    href: "https://www.youtube.com/watch?v=eKQuwAmIVKA"
-  }, "Queen"), " of Convenience. The songs are by our dearest pal Stevie Wonder. Thanks Stevie for making Su a happy little birthday!", _react.default.createElement("br", null), "Check out our ", _react.default.createElement("a", {
+  }, _react.default.createElement("p", null, "Hi I'm ", _react.default.createElement("a", {
+    href: "https://imgur.com/a/wbvDxuy"
+  }, "the Cylo Drone."), " ", _react.default.createElement("br", null), "If you don't know who I am, you're missing out. I'm ", _react.default.createElement("a", {
+    href: "https://nidnogg.github.io/mood-drone/"
+  }, "nidnogg's"), " dad and I rock and I roll. And today is father's day. Awesome! I am a ", _react.default.createElement("a", {
+    href: "https://br.linkedin.com/in/cylotoledo"
+  }, "creative director."), " ", _react.default.createElement("br", null), "Cheers from the cyber ", _react.default.createElement("a", {
+    href: "https://the-cyber-artnet.vercel.app/"
+  }, "artweb."), "  ", _react.default.createElement("br", null), "Songs are from nidnogg's ", _react.default.createElement("a", {
     href: "https://soundcloud.com/nidnogg"
-  }, "soundcloud!"), " ", _react.default.createElement("br", null), "Also inspired by Docubyte's phenomenal ", _react.default.createElement("a", {
-    href: "https://www.docubyte.com/works/guide-to-computing/"
-  }, "Guide to Computing."), " Cheers from your family and Henrique! PS: Papura alpha is ", _react.default.createElement("a", {
-    href: "https://papura.vercel.app/"
-  }, "live"), "!"))), _react.default.createElement("div", {
+  }, "soundcloud"), " and the ", _react.default.createElement("a", {
+    href: "https://www.youtube.com/channel/UC8sdN6rOzGrCHDIDHTK_2KA"
+  }, "vinyl frontier.")))), _react.default.createElement("div", {
     ref: blur,
     className: "drone-wrapper"
   }, _react.default.createElement(_Drone.default, {
@@ -36017,7 +36015,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54362" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60532" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
