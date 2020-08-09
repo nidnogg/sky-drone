@@ -7,9 +7,8 @@ const AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext;
 let currentTrack = 0;
 const audioUrls = [
-                   "https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/happy_birthday_su.mp3?alt=media&token=c1f1cc94-0418-48a6-942b-22a6bc8c4d93",
-                   "https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/Don't%20You%20Worry%20'Bout%20A%20Thing.mp3?alt=media&token=0da2fbee-f3d3-4072-846b-4ef7fbeb8f1f",
-                   "https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/The%20Lumineers%20-%20Sleep%20On%20The%20Floor%20(Official%20Video).mp3?alt=media&token=14128be8-fa4b-45b4-b762-8cc95181294b"
+                   "https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/Nathaniel%20Best%20-%20Thank%20You%20Father.mp3?alt=media&token=c720c7c7-ec34-4a55-a82b-0e37a4358663",
+                   "https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/pulsewaves.mp3?alt=media&token=8c300cfc-8d24-4895-8586-3159830a4232",
                   ];
 
 const audioStop = () => {
