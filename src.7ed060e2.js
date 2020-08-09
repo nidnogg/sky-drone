@@ -35929,7 +35929,7 @@ var App = function App() {
   }, _react.default.createElement("span", {
     ref: menuHeader,
     className: "menu-header"
-  }, "su drone"), " ", _react.default.createElement("span", {
+  }, "cylo drone"), " ", _react.default.createElement("span", {
     className: "ver-num",
     ref: verNum
   }, "v1.0")), _react.default.createElement("div", {
@@ -36015,7 +36015,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60532" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60850" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
