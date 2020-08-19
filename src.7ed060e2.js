@@ -33968,7 +33968,7 @@ var Drone = function Drone(props) {
     d: "M274.28 500.34l-1.62-.88a10.63 10.63 0 001.86-.15c.33-.06.67-.14 1-.22.56-.15 1-.29 1-.29l-.47.77z",
     fill: "#ac884d"
   })), _react.default.createElement("g", {
-    "data-name": "SU DRONE",
+    "data-name": "SKY DRONE",
     opacity: 0.9,
     style: {
       isolation: "isolate"
@@ -33981,7 +33981,7 @@ var Drone = function Drone(props) {
     style: {
       isolation: "isolate"
     }
-  }, "SU"), _react.default.createElement("text", {
+  }, "SKY"), _react.default.createElement("text", {
     transform: "translate(280.29 499.05)",
     style: {
       isolation: "isolate"
@@ -35429,7 +35429,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext;
 var currentTrack = 0;
-var audioUrls = ["https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/happy_birthday_su.mp3?alt=media&token=c1f1cc94-0418-48a6-942b-22a6bc8c4d93", "https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/Don't%20You%20Worry%20'Bout%20A%20Thing.mp3?alt=media&token=0da2fbee-f3d3-4072-846b-4ef7fbeb8f1f", "https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/The%20Lumineers%20-%20Sleep%20On%20The%20Floor%20(Official%20Video).mp3?alt=media&token=14128be8-fa4b-45b4-b762-8cc95181294b"];
+var audioUrls = ["https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/Rogerio%20Skylab%20-%20Cancer%20no%20Cu.mp3?alt=media&token=992206f7-772e-4fb5-8d29-0dc75738830a", "https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/Nathaniel%20Best%20-%20Thank%20You%20Father.mp3?alt=media&token=c720c7c7-ec34-4a55-a82b-0e37a4358663", "https://firebasestorage.googleapis.com/v0/b/cloudtop-8de79.appspot.com/o/pulsewaves.mp3?alt=media&token=8c300cfc-8d24-4895-8586-3159830a4232"];
 
 var audioStop = function audioStop() {
   // gets audio element
@@ -35929,25 +35929,27 @@ var App = function App() {
   }, _react.default.createElement("span", {
     ref: menuHeader,
     className: "menu-header"
-  }, "cylo drone"), " ", _react.default.createElement("span", {
+  }, "sky drone"), " ", _react.default.createElement("span", {
     className: "ver-num",
     ref: verNum
   }, "v1.0")), _react.default.createElement("div", {
     ref: menuContentDiv,
     className: "main-menu-content"
   }, _react.default.createElement("p", null, "Hi I'm ", _react.default.createElement("a", {
-    href: "https://imgur.com/a/wbvDxuy"
-  }, "the Cylo Drone."), " ", _react.default.createElement("br", null), "If you don't know who I am, you're missing out. I'm ", _react.default.createElement("a", {
+    href: "https://imgur.com/a/A8BUEB1"
+  }, "the Sky Drone "), ", the drone of ", _react.default.createElement("a", {
+    href: "https://en.wikipedia.org/wiki/Rog%C3%A9rio_Skylab"
+  }, "Rogerio Skylab."), " ", _react.default.createElement("br", null), "If you don't know who I am, you're missing out. I'm ", _react.default.createElement("a", {
     href: "https://nidnogg.github.io/mood-drone/"
-  }, "nidnogg's"), " dad and I rock and I roll. And today is father's day. Awesome! I am a ", _react.default.createElement("a", {
-    href: "https://br.linkedin.com/in/cylotoledo"
-  }, "creative director."), " ", _react.default.createElement("br", null), "Cheers from the cyber ", _react.default.createElement("a", {
+  }, "cu's"), " dad and I rock and I roll. And today is cu day. Awesome! I am a ", _react.default.createElement("a", {
+    href: "https://www.youtube.com/watch?v=vb2jP9yb0GQ"
+  }, "creative cu."), " ", _react.default.createElement("br", null), "Cheers from the cyber ", _react.default.createElement("a", {
     href: "https://the-cyber-artnet.vercel.app/"
-  }, "artweb."), "  ", _react.default.createElement("br", null), "Songs are from nidnogg's ", _react.default.createElement("a", {
+  }, "fartweb."), "  ", _react.default.createElement("br", null), "Songs are from nidnogg's ", _react.default.createElement("a", {
     href: "https://soundcloud.com/nidnogg"
-  }, "soundcloud"), " and the ", _react.default.createElement("a", {
-    href: "https://www.youtube.com/channel/UC8sdN6rOzGrCHDIDHTK_2KA"
-  }, "vinyl frontier.")))), _react.default.createElement("div", {
+  }, "soundcu"), " and the ", _react.default.createElement("a", {
+    href: "https://www.youtube.com/watch?v=T6ilsDwLLYQ"
+  }, "cu frontier.")))), _react.default.createElement("div", {
     ref: blur,
     className: "drone-wrapper"
   }, _react.default.createElement(_Drone.default, {
@@ -36015,7 +36017,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60850" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60043" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -36191,5 +36193,4 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","../src/index.js"], null)
-//# sourceMappingURL=/src.7ed060e2.js.map
+},{}]
