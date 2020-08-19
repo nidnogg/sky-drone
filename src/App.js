@@ -65,16 +65,16 @@ const App = () => {
       <div id="poster"></div>
       <section ref={menu} className="main-menu-section">
         <div ref={menuHeaderDiv} className="main-menu-header">
-            <span ref={menuHeader} className="menu-header">cylo drone</span> <span className="ver-num" ref={verNum}>v1.0</span>     
+            <span ref={menuHeader} className="menu-header">sky drone</span> <span className="ver-num" ref={verNum}>v1.0</span>     
         </div>
         
         <div ref={menuContentDiv} className="main-menu-content">
           <p>
-            Hi I'm <a href="https://imgur.com/a/wbvDxuy">the Cylo Drone.</a> <br />
-            If you don't know who I am, you're missing out. I'm <a href="https://nidnogg.github.io/mood-drone/">nidnogg's</a> dad and I rock and I roll.
-            And today is father's day. Awesome! I am a <a href="https://br.linkedin.com/in/cylotoledo">creative director.</a> <br />
-            Cheers from the cyber <a href="https://the-cyber-artnet.vercel.app/">artweb.</a>  <br />
-            Songs are from nidnogg's <a href="https://soundcloud.com/nidnogg">soundcloud</a> and the <a href="https://www.youtube.com/channel/UC8sdN6rOzGrCHDIDHTK_2KA">vinyl frontier.</a>
+            Hi I'm <a href="https://imgur.com/a/A8BUEB1">the Sky Drone </a>, the drone of <a href="https://en.wikipedia.org/wiki/Rog%C3%A9rio_Skylab">Rogerio Skylab.</a> <br />
+            If you don't know who I am, you're missing out. I'm <a href="https://nidnogg.github.io/mood-drone/">cu's</a> dad and I rock and I roll.
+            And today is cu day. Awesome! I am a <a href="https://www.youtube.com/watch?v=vb2jP9yb0GQ">creative cu.</a> <br />
+            Cheers from the cyber <a href="https://the-cyber-artnet.vercel.app/">fartweb.</a>  <br />
+            Songs are from nidnogg's <a href="https://soundcloud.com/nidnogg">soundcu</a> and the <a href="https://www.youtube.com/watch?v=T6ilsDwLLYQ">cu frontier.</a>
           </p>
         </div>
       </section>
