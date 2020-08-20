@@ -324,7 +324,7 @@ checkPropTypes.resetWarningCache = function () {
 
 module.exports = checkPropTypes;
 },{"./lib/ReactPropTypesSecret":"../node_modules/prop-types/lib/ReactPropTypesSecret.js"}],"../node_modules/react/cjs/react.development.js":[function(require,module,exports) {
-/** @license React v16.13.0
+/** @license React v16.13.1
  * react.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -342,7 +342,7 @@ if ("development" !== "production") {
 
     var checkPropTypes = require('prop-types/checkPropTypes');
 
-    var ReactVersion = '16.13.0'; // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+    var ReactVersion = '16.13.1'; // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
     // nor polyfill, then a plain number is used for performance.
 
     var hasSymbol = typeof Symbol === 'function' && Symbol.for;
@@ -2209,7 +2209,7 @@ if ("development" === 'production') {
   module.exports = require('./cjs/react.development.js');
 }
 },{"./cjs/react.development.js":"../node_modules/react/cjs/react.development.js"}],"../node_modules/scheduler/cjs/scheduler.development.js":[function(require,module,exports) {
-/** @license React v0.19.0
+/** @license React v0.19.1
  * scheduler.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -3072,7 +3072,7 @@ if ("development" === 'production') {
   module.exports = require('./cjs/scheduler.development.js');
 }
 },{"./cjs/scheduler.development.js":"../node_modules/scheduler/cjs/scheduler.development.js"}],"../node_modules/scheduler/cjs/scheduler-tracing.development.js":[function(require,module,exports) {
-/** @license React v0.19.0
+/** @license React v0.19.1
  * scheduler-tracing.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -3428,7 +3428,7 @@ if ("development" === 'production') {
   module.exports = require('./cjs/scheduler-tracing.development.js');
 }
 },{"./cjs/scheduler-tracing.development.js":"../node_modules/scheduler/cjs/scheduler-tracing.development.js"}],"../node_modules/react-dom/cjs/react-dom.development.js":[function(require,module,exports) {
-/** @license React v16.13.0
+/** @license React v16.13.1
  * react-dom.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -3876,280 +3876,9 @@ if ("development" !== "production") {
     var FundamentalComponent = 20;
     var ScopeComponent = 21;
     var Block = 22;
-    var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
-
-    function describeComponentFrame(name, source, ownerName) {
-      var sourceInfo = '';
-
-      if (source) {
-        var path = source.fileName;
-        var fileName = path.replace(BEFORE_SLASH_RE, '');
-        {
-          // In DEV, include code for a common special case:
-          // prefer "folder/index.js" instead of just "index.js".
-          if (/^index\./.test(fileName)) {
-            var match = path.match(BEFORE_SLASH_RE);
-
-            if (match) {
-              var pathBeforeSlash = match[1];
-
-              if (pathBeforeSlash) {
-                var folderName = pathBeforeSlash.replace(BEFORE_SLASH_RE, '');
-                fileName = folderName + '/' + fileName;
-              }
-            }
-          }
-        }
-        sourceInfo = ' (at ' + fileName + ':' + source.lineNumber + ')';
-      } else if (ownerName) {
-        sourceInfo = ' (created by ' + ownerName + ')';
-      }
-
-      return '\n    in ' + (name || 'Unknown') + sourceInfo;
-    } // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-    // nor polyfill, then a plain number is used for performance.
-
-
-    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-    var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
-    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
-
-    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
-    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-    var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
-    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-    var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
-    var MAYBE_ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-    var FAUX_ITERATOR_SYMBOL = '@@iterator';
-
-    function getIteratorFn(maybeIterable) {
-      if (maybeIterable === null || typeof maybeIterable !== 'object') {
-        return null;
-      }
-
-      var maybeIterator = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL];
-
-      if (typeof maybeIterator === 'function') {
-        return maybeIterator;
-      }
-
-      return null;
-    }
-
-    var Uninitialized = -1;
-    var Pending = 0;
-    var Resolved = 1;
-    var Rejected = 2;
-
-    function refineResolvedLazyComponent(lazyComponent) {
-      return lazyComponent._status === Resolved ? lazyComponent._result : null;
-    }
-
-    function initializeLazyComponentType(lazyComponent) {
-      if (lazyComponent._status === Uninitialized) {
-        lazyComponent._status = Pending;
-        var ctor = lazyComponent._ctor;
-        var thenable = ctor();
-        lazyComponent._result = thenable;
-        thenable.then(function (moduleObject) {
-          if (lazyComponent._status === Pending) {
-            var defaultExport = moduleObject.default;
-            {
-              if (defaultExport === undefined) {
-                error('lazy: Expected the result of a dynamic import() call. ' + 'Instead received: %s\n\nYour code should look like: \n  ' + "const MyComponent = lazy(() => import('./MyComponent'))", moduleObject);
-              }
-            }
-            lazyComponent._status = Resolved;
-            lazyComponent._result = defaultExport;
-          }
-        }, function (error) {
-          if (lazyComponent._status === Pending) {
-            lazyComponent._status = Rejected;
-            lazyComponent._result = error;
-          }
-        });
-      }
-    }
-
-    function getWrappedName(outerType, innerType, wrapperName) {
-      var functionName = innerType.displayName || innerType.name || '';
-      return outerType.displayName || (functionName !== '' ? wrapperName + "(" + functionName + ")" : wrapperName);
-    }
-
-    function getComponentName(type) {
-      if (type == null) {
-        // Host root, text node or just invalid type.
-        return null;
-      }
-
-      {
-        if (typeof type.tag === 'number') {
-          error('Received an unexpected object in getComponentName(). ' + 'This is likely a bug in React. Please file an issue.');
-        }
-      }
-
-      if (typeof type === 'function') {
-        return type.displayName || type.name || null;
-      }
-
-      if (typeof type === 'string') {
-        return type;
-      }
-
-      switch (type) {
-        case REACT_FRAGMENT_TYPE:
-          return 'Fragment';
-
-        case REACT_PORTAL_TYPE:
-          return 'Portal';
-
-        case REACT_PROFILER_TYPE:
-          return "Profiler";
-
-        case REACT_STRICT_MODE_TYPE:
-          return 'StrictMode';
-
-        case REACT_SUSPENSE_TYPE:
-          return 'Suspense';
-
-        case REACT_SUSPENSE_LIST_TYPE:
-          return 'SuspenseList';
-      }
-
-      if (typeof type === 'object') {
-        switch (type.$$typeof) {
-          case REACT_CONTEXT_TYPE:
-            return 'Context.Consumer';
-
-          case REACT_PROVIDER_TYPE:
-            return 'Context.Provider';
-
-          case REACT_FORWARD_REF_TYPE:
-            return getWrappedName(type, type.render, 'ForwardRef');
-
-          case REACT_MEMO_TYPE:
-            return getComponentName(type.type);
-
-          case REACT_BLOCK_TYPE:
-            return getComponentName(type.render);
-
-          case REACT_LAZY_TYPE:
-            {
-              var thenable = type;
-              var resolvedThenable = refineResolvedLazyComponent(thenable);
-
-              if (resolvedThenable) {
-                return getComponentName(resolvedThenable);
-              }
-
-              break;
-            }
-        }
-      }
-
-      return null;
-    }
-
-    var ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
-
-    function describeFiber(fiber) {
-      switch (fiber.tag) {
-        case HostRoot:
-        case HostPortal:
-        case HostText:
-        case Fragment:
-        case ContextProvider:
-        case ContextConsumer:
-          return '';
-
-        default:
-          var owner = fiber._debugOwner;
-          var source = fiber._debugSource;
-          var name = getComponentName(fiber.type);
-          var ownerName = null;
-
-          if (owner) {
-            ownerName = getComponentName(owner.type);
-          }
-
-          return describeComponentFrame(name, source, ownerName);
-      }
-    }
-
-    function getStackByFiberInDevAndProd(workInProgress) {
-      var info = '';
-      var node = workInProgress;
-
-      do {
-        info += describeFiber(node);
-        node = node.return;
-      } while (node);
-
-      return info;
-    }
-
-    var current = null;
-    var phase = null;
-
-    function getCurrentFiberOwnerNameInDevOrNull() {
-      {
-        if (current === null) {
-          return null;
-        }
-
-        var owner = current._debugOwner;
-
-        if (owner !== null && typeof owner !== 'undefined') {
-          return getComponentName(owner.type);
-        }
-      }
-      return null;
-    }
-
-    function getCurrentFiberStackInDev() {
-      {
-        if (current === null) {
-          return '';
-        } // Safe because if current fiber exists, we are reconciling,
-        // and it is guaranteed to be the work-in-progress version.
-
-
-        return getStackByFiberInDevAndProd(current);
-      }
-    }
-
-    function resetCurrentFiber() {
-      {
-        ReactDebugCurrentFrame.getCurrentStack = null;
-        current = null;
-        phase = null;
-      }
-    }
-
-    function setCurrentFiber(fiber) {
-      {
-        ReactDebugCurrentFrame.getCurrentStack = getCurrentFiberStackInDev;
-        current = fiber;
-        phase = null;
-      }
-    }
-
-    function setCurrentPhase(lifeCyclePhase) {
-      {
-        phase = lifeCyclePhase;
-      }
-    }
     /**
      * Injectable ordering of event plugins.
      */
-
 
     var eventPluginOrder = null;
     /**
@@ -4852,9 +4581,9 @@ if ("development" !== "production") {
       null, // attributeNamespace
       true);
     });
-    var ReactDebugCurrentFrame$1 = null;
+    var ReactDebugCurrentFrame = null;
     {
-      ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
+      ReactDebugCurrentFrame = ReactSharedInternals.ReactDebugCurrentFrame;
     } // A javascript: URL can contain leading C0 control or \u0020 SPACE,
     // and any newline or tab are filtered out as if they're not part of the URL.
     // https://url.spec.whatwg.org/#url-parsing
@@ -5057,6 +4786,277 @@ if ("development" !== "production") {
         } else {
           node.setAttribute(attributeName, attributeValue);
         }
+      }
+    }
+
+    var BEFORE_SLASH_RE = /^(.*)[\\\/]/;
+
+    function describeComponentFrame(name, source, ownerName) {
+      var sourceInfo = '';
+
+      if (source) {
+        var path = source.fileName;
+        var fileName = path.replace(BEFORE_SLASH_RE, '');
+        {
+          // In DEV, include code for a common special case:
+          // prefer "folder/index.js" instead of just "index.js".
+          if (/^index\./.test(fileName)) {
+            var match = path.match(BEFORE_SLASH_RE);
+
+            if (match) {
+              var pathBeforeSlash = match[1];
+
+              if (pathBeforeSlash) {
+                var folderName = pathBeforeSlash.replace(BEFORE_SLASH_RE, '');
+                fileName = folderName + '/' + fileName;
+              }
+            }
+          }
+        }
+        sourceInfo = ' (at ' + fileName + ':' + source.lineNumber + ')';
+      } else if (ownerName) {
+        sourceInfo = ' (created by ' + ownerName + ')';
+      }
+
+      return '\n    in ' + (name || 'Unknown') + sourceInfo;
+    } // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+    // nor polyfill, then a plain number is used for performance.
+
+
+    var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+    var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+    var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+    var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+    var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+    var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+    var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+    var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+
+    var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+    var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+    var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+    var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
+    var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+    var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+    var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
+    var MAYBE_ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+    var FAUX_ITERATOR_SYMBOL = '@@iterator';
+
+    function getIteratorFn(maybeIterable) {
+      if (maybeIterable === null || typeof maybeIterable !== 'object') {
+        return null;
+      }
+
+      var maybeIterator = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL];
+
+      if (typeof maybeIterator === 'function') {
+        return maybeIterator;
+      }
+
+      return null;
+    }
+
+    var Uninitialized = -1;
+    var Pending = 0;
+    var Resolved = 1;
+    var Rejected = 2;
+
+    function refineResolvedLazyComponent(lazyComponent) {
+      return lazyComponent._status === Resolved ? lazyComponent._result : null;
+    }
+
+    function initializeLazyComponentType(lazyComponent) {
+      if (lazyComponent._status === Uninitialized) {
+        lazyComponent._status = Pending;
+        var ctor = lazyComponent._ctor;
+        var thenable = ctor();
+        lazyComponent._result = thenable;
+        thenable.then(function (moduleObject) {
+          if (lazyComponent._status === Pending) {
+            var defaultExport = moduleObject.default;
+            {
+              if (defaultExport === undefined) {
+                error('lazy: Expected the result of a dynamic import() call. ' + 'Instead received: %s\n\nYour code should look like: \n  ' + "const MyComponent = lazy(() => import('./MyComponent'))", moduleObject);
+              }
+            }
+            lazyComponent._status = Resolved;
+            lazyComponent._result = defaultExport;
+          }
+        }, function (error) {
+          if (lazyComponent._status === Pending) {
+            lazyComponent._status = Rejected;
+            lazyComponent._result = error;
+          }
+        });
+      }
+    }
+
+    function getWrappedName(outerType, innerType, wrapperName) {
+      var functionName = innerType.displayName || innerType.name || '';
+      return outerType.displayName || (functionName !== '' ? wrapperName + "(" + functionName + ")" : wrapperName);
+    }
+
+    function getComponentName(type) {
+      if (type == null) {
+        // Host root, text node or just invalid type.
+        return null;
+      }
+
+      {
+        if (typeof type.tag === 'number') {
+          error('Received an unexpected object in getComponentName(). ' + 'This is likely a bug in React. Please file an issue.');
+        }
+      }
+
+      if (typeof type === 'function') {
+        return type.displayName || type.name || null;
+      }
+
+      if (typeof type === 'string') {
+        return type;
+      }
+
+      switch (type) {
+        case REACT_FRAGMENT_TYPE:
+          return 'Fragment';
+
+        case REACT_PORTAL_TYPE:
+          return 'Portal';
+
+        case REACT_PROFILER_TYPE:
+          return "Profiler";
+
+        case REACT_STRICT_MODE_TYPE:
+          return 'StrictMode';
+
+        case REACT_SUSPENSE_TYPE:
+          return 'Suspense';
+
+        case REACT_SUSPENSE_LIST_TYPE:
+          return 'SuspenseList';
+      }
+
+      if (typeof type === 'object') {
+        switch (type.$$typeof) {
+          case REACT_CONTEXT_TYPE:
+            return 'Context.Consumer';
+
+          case REACT_PROVIDER_TYPE:
+            return 'Context.Provider';
+
+          case REACT_FORWARD_REF_TYPE:
+            return getWrappedName(type, type.render, 'ForwardRef');
+
+          case REACT_MEMO_TYPE:
+            return getComponentName(type.type);
+
+          case REACT_BLOCK_TYPE:
+            return getComponentName(type.render);
+
+          case REACT_LAZY_TYPE:
+            {
+              var thenable = type;
+              var resolvedThenable = refineResolvedLazyComponent(thenable);
+
+              if (resolvedThenable) {
+                return getComponentName(resolvedThenable);
+              }
+
+              break;
+            }
+        }
+      }
+
+      return null;
+    }
+
+    var ReactDebugCurrentFrame$1 = ReactSharedInternals.ReactDebugCurrentFrame;
+
+    function describeFiber(fiber) {
+      switch (fiber.tag) {
+        case HostRoot:
+        case HostPortal:
+        case HostText:
+        case Fragment:
+        case ContextProvider:
+        case ContextConsumer:
+          return '';
+
+        default:
+          var owner = fiber._debugOwner;
+          var source = fiber._debugSource;
+          var name = getComponentName(fiber.type);
+          var ownerName = null;
+
+          if (owner) {
+            ownerName = getComponentName(owner.type);
+          }
+
+          return describeComponentFrame(name, source, ownerName);
+      }
+    }
+
+    function getStackByFiberInDevAndProd(workInProgress) {
+      var info = '';
+      var node = workInProgress;
+
+      do {
+        info += describeFiber(node);
+        node = node.return;
+      } while (node);
+
+      return info;
+    }
+
+    var current = null;
+    var isRendering = false;
+
+    function getCurrentFiberOwnerNameInDevOrNull() {
+      {
+        if (current === null) {
+          return null;
+        }
+
+        var owner = current._debugOwner;
+
+        if (owner !== null && typeof owner !== 'undefined') {
+          return getComponentName(owner.type);
+        }
+      }
+      return null;
+    }
+
+    function getCurrentFiberStackInDev() {
+      {
+        if (current === null) {
+          return '';
+        } // Safe because if current fiber exists, we are reconciling,
+        // and it is guaranteed to be the work-in-progress version.
+
+
+        return getStackByFiberInDevAndProd(current);
+      }
+    }
+
+    function resetCurrentFiber() {
+      {
+        ReactDebugCurrentFrame$1.getCurrentStack = null;
+        current = null;
+        isRendering = false;
+      }
+    }
+
+    function setCurrentFiber(fiber) {
+      {
+        ReactDebugCurrentFrame$1.getCurrentStack = getCurrentFiberStackInDev;
+        current = fiber;
+        isRendering = false;
+      }
+    }
+
+    function setIsRendering(rendering) {
+      {
+        isRendering = rendering;
       }
     } // Flow does not allow string concatenation of most non-string types. To work
     // around this limitation, we use an opaque type that can only be obtained by
@@ -9063,7 +9063,6 @@ if ("development" !== "production") {
     }
 
     var didWarnInvalidHydration = false;
-    var didWarnShadyDOM = false;
     var DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
     var SUPPRESS_CONTENT_EDITABLE_WARNING = 'suppressContentEditableWarning';
     var SUPPRESS_HYDRATION_WARNING = 'suppressHydrationWarning';
@@ -9376,11 +9375,6 @@ if ("development" !== "production") {
       var isCustomComponentTag = isCustomComponent(tag, rawProps);
       {
         validatePropertiesInDevelopment(tag, rawProps);
-
-        if (isCustomComponentTag && !didWarnShadyDOM && domElement.shadyRoot) {
-          error('%s is using shady DOM. Using shady DOM with React can ' + 'cause things to break subtly.', getCurrentFiberOwnerNameInDevOrNull() || 'A component');
-          didWarnShadyDOM = true;
-        }
       } // TODO: Make sure that we check isMounted before firing any of these events.
 
       var props;
@@ -9732,11 +9726,6 @@ if ("development" !== "production") {
         suppressHydrationWarning = rawProps[SUPPRESS_HYDRATION_WARNING] === true;
         isCustomComponentTag = isCustomComponent(tag, rawProps);
         validatePropertiesInDevelopment(tag, rawProps);
-
-        if (isCustomComponentTag && !didWarnShadyDOM && domElement.shadyRoot) {
-          error('%s is using shady DOM. Using shady DOM with React can ' + 'cause things to break subtly.', getCurrentFiberOwnerNameInDevOrNull() || 'A component');
-          didWarnShadyDOM = true;
-        }
       } // TODO: Make sure that we check isMounted before firing any of these events.
 
       switch (tag) {
@@ -14295,15 +14284,9 @@ if ("development" !== "production") {
         }
 
         var childContext;
-        {
-          setCurrentPhase('getChildContext');
-        }
         startPhaseTimer(fiber, 'getChildContext');
         childContext = instance.getChildContext();
         stopPhaseTimer();
-        {
-          setCurrentPhase(null);
-        }
 
         for (var contextKey in childContext) {
           if (!(contextKey in childContextTypes)) {
@@ -20141,7 +20124,6 @@ if ("development" !== "production") {
     var didWarnAboutGetDerivedStateOnFunctionComponent;
     var didWarnAboutFunctionRefs;
     var didWarnAboutReassigningProps;
-    var didWarnAboutMaxDuration;
     var didWarnAboutRevealOrder;
     var didWarnAboutTailOptions;
     {
@@ -20151,7 +20133,6 @@ if ("development" !== "production") {
       didWarnAboutGetDerivedStateOnFunctionComponent = {};
       didWarnAboutFunctionRefs = {};
       didWarnAboutReassigningProps = false;
-      didWarnAboutMaxDuration = false;
       didWarnAboutRevealOrder = {};
       didWarnAboutTailOptions = {};
     }
@@ -20213,7 +20194,7 @@ if ("development" !== "production") {
       prepareToReadContext(workInProgress, renderExpirationTime);
       {
         ReactCurrentOwner$1.current = workInProgress;
-        setCurrentPhase('render');
+        setIsRendering(true);
         nextChildren = renderWithHooks(current, workInProgress, render, nextProps, ref, renderExpirationTime);
 
         if (workInProgress.mode & StrictMode) {
@@ -20223,7 +20204,7 @@ if ("development" !== "production") {
           }
         }
 
-        setCurrentPhase(null);
+        setIsRendering(false);
       }
 
       if (current !== null && !didReceiveUpdate) {
@@ -20420,7 +20401,7 @@ if ("development" !== "production") {
       prepareToReadContext(workInProgress, renderExpirationTime);
       {
         ReactCurrentOwner$1.current = workInProgress;
-        setCurrentPhase('render');
+        setIsRendering(true);
         nextChildren = renderWithHooks(current, workInProgress, Component, nextProps, context, renderExpirationTime);
 
         if (workInProgress.mode & StrictMode) {
@@ -20430,7 +20411,7 @@ if ("development" !== "production") {
           }
         }
 
-        setCurrentPhase(null);
+        setIsRendering(false);
       }
 
       if (current !== null && !didReceiveUpdate) {
@@ -20542,14 +20523,14 @@ if ("development" !== "production") {
         }
       } else {
         {
-          setCurrentPhase('render');
+          setIsRendering(true);
           nextChildren = instance.render();
 
           if (workInProgress.mode & StrictMode) {
             instance.render();
           }
 
-          setCurrentPhase(null);
+          setIsRendering(false);
         }
       } // React DevTools reads this flag.
 
@@ -20852,8 +20833,10 @@ if ("development" !== "production") {
           ReactStrictModeWarnings.recordLegacyContextWarning(workInProgress, null);
         }
 
+        setIsRendering(true);
         ReactCurrentOwner$1.current = workInProgress;
         value = renderWithHooks(null, workInProgress, Component, props, context, renderExpirationTime);
+        setIsRendering(false);
       } // React DevTools reads this flag.
 
       workInProgress.effectTag |= PerformedWork;
@@ -21007,15 +20990,7 @@ if ("development" !== "production") {
       }
 
       suspenseContext = setDefaultShallowSuspenseContext(suspenseContext);
-      pushSuspenseContext(workInProgress, suspenseContext);
-      {
-        if ('maxDuration' in nextProps) {
-          if (!didWarnAboutMaxDuration) {
-            didWarnAboutMaxDuration = true;
-            error('maxDuration has been removed from React. ' + 'Remove the maxDuration prop.');
-          }
-        }
-      } // This next part is a bit confusing. If the children timeout, we switch to
+      pushSuspenseContext(workInProgress, suspenseContext); // This next part is a bit confusing. If the children timeout, we switch to
       // showing the fallback children in place of the "primary" children.
       // However, we don't want to delete the primary children because then their
       // state will be lost (both the React state and the host state, e.g.
@@ -21652,9 +21627,9 @@ if ("development" !== "production") {
       var newChildren;
       {
         ReactCurrentOwner$1.current = workInProgress;
-        setCurrentPhase('render');
+        setIsRendering(true);
         newChildren = render(newValue);
-        setCurrentPhase(null);
+        setIsRendering(false);
       } // React DevTools reads this flag.
 
       workInProgress.effectTag |= PerformedWork;
@@ -24120,9 +24095,11 @@ if ("development" !== "production") {
           var currentSource = sourceFiber.alternate;
 
           if (currentSource) {
+            sourceFiber.updateQueue = currentSource.updateQueue;
             sourceFiber.memoizedState = currentSource.memoizedState;
             sourceFiber.expirationTime = currentSource.expirationTime;
           } else {
+            sourceFiber.updateQueue = null;
             sourceFiber.memoizedState = null;
           }
         }
@@ -26517,40 +26494,37 @@ if ("development" !== "production") {
       };
     }
     var didWarnAboutUpdateInRender = false;
-    var didWarnAboutUpdateInGetChildContext = false;
+    var didWarnAboutUpdateInRenderForAnotherComponent;
+    {
+      didWarnAboutUpdateInRenderForAnotherComponent = new Set();
+    }
 
     function warnAboutRenderPhaseUpdatesInDEV(fiber) {
       {
-        if ((executionContext & RenderContext) !== NoContext) {
+        if (isRendering && (executionContext & RenderContext) !== NoContext) {
           switch (fiber.tag) {
             case FunctionComponent:
             case ForwardRef:
             case SimpleMemoComponent:
               {
-                error('Cannot update a component from inside the function body of a ' + 'different component.');
+                var renderingComponentName = workInProgress && getComponentName(workInProgress.type) || 'Unknown'; // Dedupe by the rendering component because it's the one that needs to be fixed.
+
+                var dedupeKey = renderingComponentName;
+
+                if (!didWarnAboutUpdateInRenderForAnotherComponent.has(dedupeKey)) {
+                  didWarnAboutUpdateInRenderForAnotherComponent.add(dedupeKey);
+                  var setStateComponentName = getComponentName(fiber.type) || 'Unknown';
+                  error('Cannot update a component (`%s`) while rendering a ' + 'different component (`%s`). To locate the bad setState() call inside `%s`, ' + 'follow the stack trace as described in https://fb.me/setstate-in-render', setStateComponentName, renderingComponentName, renderingComponentName);
+                }
+
                 break;
               }
 
             case ClassComponent:
               {
-                switch (phase) {
-                  case 'getChildContext':
-                    if (didWarnAboutUpdateInGetChildContext) {
-                      return;
-                    }
-
-                    error('setState(...): Cannot call setState() inside getChildContext()');
-                    didWarnAboutUpdateInGetChildContext = true;
-                    break;
-
-                  case 'render':
-                    if (didWarnAboutUpdateInRender) {
-                      return;
-                    }
-
-                    error('Cannot update during an existing state transition (such as ' + 'within `render`). Render methods should be a pure ' + 'function of props and state.');
-                    didWarnAboutUpdateInRender = true;
-                    break;
+                if (!didWarnAboutUpdateInRender) {
+                  error('Cannot update during an existing state transition (such as ' + 'within `render`). Render methods should be a pure ' + 'function of props and state.');
+                  didWarnAboutUpdateInRender = true;
                 }
 
                 break;
@@ -27621,7 +27595,7 @@ if ("development" !== "production") {
       }
 
       {
-        if (phase === 'render' && current !== null && !didWarnAboutNestedUpdates) {
+        if (isRendering && current !== null && !didWarnAboutNestedUpdates) {
           didWarnAboutNestedUpdates = true;
           error('Render methods should be a pure function of props and state; ' + 'triggering nested component updates from render is not allowed. ' + 'If necessary, trigger nested updates in componentDidUpdate.\n\n' + 'Check the render method of %s.', getComponentName(current.type) || 'Unknown');
         }
@@ -28192,7 +28166,7 @@ if ("development" !== "production") {
       };
     }
 
-    var ReactVersion = '16.13.0';
+    var ReactVersion = '16.13.1';
     setAttemptUserBlockingHydration(attemptUserBlockingHydration$1);
     setAttemptContinuousHydration(attemptContinuousHydration$1);
     setAttemptHydrationAtCurrentPriority(attemptHydrationAtCurrentPriority$1);
@@ -28333,7 +28307,7 @@ function _inheritsLoose(subClass, superClass) {
   subClass.__proto__ = superClass;
 }
 /*!
- * GSAP 3.2.4
+ * GSAP 3.5.0
  * https://greensock.com
  *
  * @license Copyright 2008-2020, GreenSock. All rights reserved.
@@ -28390,6 +28364,7 @@ var _config = {
     _isFuncOrString = function _isFuncOrString(value) {
   return _isFunction(value) || _isString(value);
 },
+    _isTypedArray = typeof ArrayBuffer === "function" ? ArrayBuffer.isView : function () {},
     _isArray = Array.isArray,
     _strictNumExp = /(?:-?\.?\d|\.)+/gi,
     //only numbers (including negatives and decimals) but NOT relative values.
@@ -28398,8 +28373,6 @@ _numExp = /[-+=.]*\d+[.e\-+]*\d*[e\-\+]*\d*/g,
 _numWithUnitExp = /[-+=.]*\d+[.e-]*\d*[a-z%]*/g,
     _complexStringNumExp = /[-+=.]*\d+(?:\.|e-|e)*\d*/gi,
     //duplicate so that while we're looping through matches from exec(), it doesn't contaminate the lastIndex of _numExp which we use to search for colors too.
-_parenthesesExp = /\(([^()]+)\)/i,
-    //finds the string between parentheses.
 _relExp = /[+-]=-?[\.\d]+/,
     _delimitedValueExp = /[#\-+.]*\b[a-z\d-=+%.]+/gi,
     _globalTimeline,
@@ -28437,10 +28410,7 @@ _relExp = /[+-]=-?[\.\d]+/,
   var target = targets[0],
       harnessPlugin,
       i;
-
-  if (!_isObject(target) && !_isFunction(target)) {
-    targets = [targets];
-  }
+  _isObject(target) || _isFunction(target) || (targets = [targets]);
 
   if (!(harnessPlugin = (target._gsap || {}).harness)) {
     i = _harnessPlugins.length;
@@ -28461,9 +28431,8 @@ _relExp = /[+-]=-?[\.\d]+/,
     _getCache = function _getCache(target) {
   return target._gsap || _harness(toArray(target))[0]._gsap;
 },
-    _getProperty = function _getProperty(target, property) {
-  var currentValue = target[property];
-  return _isFunction(currentValue) ? target[property]() : _isUndefined(currentValue) && target.getAttribute(property) || currentValue;
+    _getProperty = function _getProperty(target, property, v) {
+  return (v = target[property]) && _isFunction(v) ? target[property]() : _isUndefined(v) && target.getAttribute && target.getAttribute(property) || v;
 },
     _forEachName = function _forEachName(names, func) {
   return (names = names.split(",")).forEach(func) || names;
@@ -28488,10 +28457,7 @@ _round = function _round(value) {
       vars = params[varsIndex],
       irVars;
 
-  if (isLegacy) {
-    vars.duration = params[1];
-  }
-
+  isLegacy && (vars.duration = params[1]);
   vars.parent = parent;
 
   if (type) {
@@ -28504,12 +28470,7 @@ _round = function _round(value) {
     }
 
     vars.immediateRender = _isNotFalse(irVars.immediateRender);
-
-    if (type < 2) {
-      vars.runBackwards = 1;
-    } else {
-      vars.startAt = params[varsIndex - 1]; // "from" vars
-    }
+    type < 2 ? vars.runBackwards = 1 : vars.startAt = params[varsIndex - 1]; // "from" vars
   }
 
   return vars;
@@ -28525,45 +28486,31 @@ _round = function _round(value) {
 
   for (i = 0; i < l; i++) {
     tween = a[i];
-
-    if (tween && tween._lazy) {
-      tween.render(tween._lazy[0], tween._lazy[1], true)._lazy = 0;
-    }
+    tween && tween._lazy && (tween.render(tween._lazy[0], tween._lazy[1], true)._lazy = 0);
   }
 },
     _lazySafeRender = function _lazySafeRender(animation, time, suppressEvents, force) {
-  if (_lazyTweens.length) {
-    _lazyRender();
-  }
-
+  _lazyTweens.length && _lazyRender();
   animation.render(time, suppressEvents, force);
-
-  if (_lazyTweens.length) {
-    //in case rendering caused any tweens to lazy-init, we should render them because typically when someone calls seek() or time() or progress(), they expect an immediate render.
-    _lazyRender();
-  }
+  _lazyTweens.length && _lazyRender(); //in case rendering caused any tweens to lazy-init, we should render them because typically when someone calls seek() or time() or progress(), they expect an immediate render.
 },
     _numericIfPossible = function _numericIfPossible(value) {
   var n = parseFloat(value);
-  return (n || n === 0) && (value + "").match(_delimitedValueExp).length < 2 ? n : value;
+  return (n || n === 0) && (value + "").match(_delimitedValueExp).length < 2 ? n : _isString(value) ? value.trim() : value;
 },
     _passThrough = function _passThrough(p) {
   return p;
 },
     _setDefaults = function _setDefaults(obj, defaults) {
   for (var p in defaults) {
-    if (!(p in obj)) {
-      obj[p] = defaults[p];
-    }
+    p in obj || (obj[p] = defaults[p]);
   }
 
   return obj;
 },
     _setKeyframeDefaults = function _setKeyframeDefaults(obj, defaults) {
   for (var p in defaults) {
-    if (!(p in obj) && p !== "duration" && p !== "ease") {
-      obj[p] = defaults[p];
-    }
+    p in obj || p === "duration" || p === "ease" || (obj[p] = defaults[p]);
   }
 },
     _merge = function _merge(base, toMerge) {
@@ -28585,9 +28532,7 @@ _round = function _round(value) {
       p;
 
   for (p in obj) {
-    if (!(p in excluding)) {
-      copy[p] = obj[p];
-    }
+    p in excluding || (copy[p] = obj[p]);
   }
 
   return copy;
@@ -28599,7 +28544,7 @@ _round = function _round(value) {
   if (_isNotFalse(vars.inherit)) {
     while (parent) {
       func(vars, parent.vars.defaults);
-      parent = parent.parent;
+      parent = parent.parent || parent._dp;
     }
   }
 
@@ -28678,18 +28623,18 @@ _round = function _round(value) {
   child._next = child._prev = child.parent = null; // don't delete the _dp just so we can revert if necessary. But parent should be null to indicate the item isn't in a linked list.
 },
     _removeFromParent = function _removeFromParent(child, onlyIfParentHasAutoRemove) {
-  if (child.parent && (!onlyIfParentHasAutoRemove || child.parent.autoRemoveChildren)) {
-    child.parent.remove(child);
-  }
-
+  child.parent && (!onlyIfParentHasAutoRemove || child.parent.autoRemoveChildren) && child.parent.remove(child);
   child._act = 0;
 },
-    _uncache = function _uncache(animation) {
-  var a = animation;
+    _uncache = function _uncache(animation, child) {
+  if (!child || child._end > animation._dur || child._start < 0) {
+    // performance optimization: if a child animation is passed in we should only uncache if that child EXTENDS the animation (its end time is beyond the end)
+    var a = animation;
 
-  while (a) {
-    a._dirty = 1;
-    a = a.parent;
+    while (a) {
+      a._dirty = 1;
+      a = a.parent;
+    }
   }
 
   return animation;
@@ -28720,7 +28665,21 @@ _animationCycle = function _animationCycle(tTime, cycleDuration) {
   return (parentTime - child._start) * child._ts + (child._ts >= 0 ? 0 : child._dirty ? child.totalDuration() : child._tDur);
 },
     _setEnd = function _setEnd(animation) {
-  return animation._end = _round(animation._start + (animation._tDur / Math.abs(animation._ts || animation._pauseTS || _tinyNum) || 0));
+  return animation._end = _round(animation._start + (animation._tDur / Math.abs(animation._ts || animation._rts || _tinyNum) || 0));
+},
+    _alignPlayhead = function _alignPlayhead(animation, totalTime) {
+  // adjusts the animation's _start and _end according to the provided totalTime (only if the parent's smoothChildTiming is true and the animation isn't paused). It doesn't do any rendering or forcing things back into parent timelines, etc. - that's what totalTime() is for.
+  var parent = animation._dp;
+
+  if (parent && parent.smoothChildTiming && animation._ts) {
+    animation._start = _round(animation._dp._time - (animation._ts > 0 ? totalTime / animation._ts : ((animation._dirty ? animation.totalDuration() : animation._tDur) - totalTime) / -animation._ts));
+
+    _setEnd(animation);
+
+    parent._dirty || _uncache(parent, animation); //for performance improvement. If the parent's cache is already dirty, it already took care of marking the ancestors as dirty too, so skip the function call here.
+  }
+
+  return animation;
 },
 
 /*
@@ -28746,7 +28705,7 @@ _postAddChecks = function _postAddChecks(timeline, child) {
   } //if the timeline has already ended but the inserted tween/timeline extends the duration, we should enable this timeline again so that it renders properly. We should also align the playhead with the parent timeline's when appropriate.
 
 
-  if (_uncache(timeline)._dp && timeline._initted && timeline._time >= timeline._dur && timeline._ts) {
+  if (_uncache(timeline, child)._dp && timeline._initted && timeline._time >= timeline._dur && timeline._ts) {
     //in case any of the ancestors had completed but should now be enabled...
     if (timeline._dur < timeline.duration()) {
       t = timeline;
@@ -28772,6 +28731,9 @@ _postAddChecks = function _postAddChecks(timeline, child) {
   skipChecks || _postAddChecks(timeline, child);
   return timeline;
 },
+    _scrollTrigger = function _scrollTrigger(animation, trigger) {
+  return (_globals.ScrollTrigger || _missingPlugin("scrollTrigger", trigger)) && _globals.ScrollTrigger.create(trigger, animation);
+},
     _attemptInitTween = function _attemptInitTween(tween, totalTime, force, suppressEvents) {
   _initTween(tween, totalTime);
 
@@ -28787,43 +28749,40 @@ _postAddChecks = function _postAddChecks(timeline, child) {
   }
 },
     _renderZeroDurationTween = function _renderZeroDurationTween(tween, totalTime, suppressEvents, force) {
-  var prevRatio = tween._zTime < 0 ? 0 : 1,
-      ratio = totalTime < 0 ? 0 : 1,
-      repeatDelay = tween._rDelay,
+  var prevRatio = tween.ratio,
+      ratio = totalTime < 0 || !totalTime && prevRatio && !tween._start && tween._zTime > _tinyNum && !tween._dp._lock || (tween._ts < 0 || tween._dp._ts < 0) && tween.data !== "isFromStart" && tween.data !== "isStart" ? 0 : 1,
+      // check parent's _lock because when a timeline repeats/yoyos and does its artificial wrapping, we shouldn't force the ratio back to 0. Also, if the tween or its parent is reversed and the totalTime is 0, we should go to a ratio of 0.
+  repeatDelay = tween._rDelay,
       tTime = 0,
       pt,
       iteration,
       prevIteration;
 
   if (repeatDelay && tween._repeat) {
-    //in case there's a zero-duration tween that has a repeat with a repeatDelay
+    // in case there's a zero-duration tween that has a repeat with a repeatDelay
     tTime = _clamp(0, tween._tDur, totalTime);
     iteration = _animationCycle(tTime, repeatDelay);
     prevIteration = _animationCycle(tween._tTime, repeatDelay);
 
     if (iteration !== prevIteration) {
       prevRatio = 1 - ratio;
-
-      if (tween.vars.repeatRefresh && tween._initted) {
-        tween.invalidate();
-      }
+      tween.vars.repeatRefresh && tween._initted && tween.invalidate();
     }
   }
 
   if (!tween._initted && _attemptInitTween(tween, totalTime, force, suppressEvents)) {
-    //if we render the very beginning (time == 0) of a fromTo(), we must force the render (normal tweens wouldn't need to render at a time of 0 when the prevTime was also 0). This is also mandatory to make sure overwriting kicks in immediately.
+    // if we render the very beginning (time == 0) of a fromTo(), we must force the render (normal tweens wouldn't need to render at a time of 0 when the prevTime was also 0). This is also mandatory to make sure overwriting kicks in immediately.
     return;
   }
 
   if (ratio !== prevRatio || force || tween._zTime === _tinyNum || !totalTime && tween._zTime) {
-    tween._zTime = totalTime || (suppressEvents ? _tinyNum : 0); //when the playhead arrives at EXACTLY time 0 (right on top) of a zero-duration tween, we need to discern if events are suppressed so that when the playhead moves again (next time), it'll trigger the callback. If events are NOT suppressed, obviously the callback would be triggered in this render. Basically, the callback should fire either when the playhead ARRIVES or LEAVES this exact spot, not both. Imagine doing a timeline.seek(0) and there's a callback that sits at 0. Since events are suppressed on that seek() by default, nothing will fire, but when the playhead moves off of that position, the callback should fire. This behavior is what people intuitively expect.
+    prevIteration = tween._zTime;
+    tween._zTime = totalTime || (suppressEvents ? _tinyNum : 0); // when the playhead arrives at EXACTLY time 0 (right on top) of a zero-duration tween, we need to discern if events are suppressed so that when the playhead moves again (next time), it'll trigger the callback. If events are NOT suppressed, obviously the callback would be triggered in this render. Basically, the callback should fire either when the playhead ARRIVES or LEAVES this exact spot, not both. Imagine doing a timeline.seek(0) and there's a callback that sits at 0. Since events are suppressed on that seek() by default, nothing will fire, but when the playhead moves off of that position, the callback should fire. This behavior is what people intuitively expect.
+
+    suppressEvents || (suppressEvents = totalTime && !prevIteration); // if it was rendered previously at exactly 0 (_zTime) and now the playhead is moving away, DON'T fire callbacks otherwise they'll seem like duplicates.
 
     tween.ratio = ratio;
-
-    if (tween._from) {
-      ratio = 1 - ratio;
-    }
-
+    tween._from && (ratio = 1 - ratio);
     tween._time = 0;
     tween._tTime = tTime;
     suppressEvents || _callback(tween, "onStart");
@@ -28834,26 +28793,21 @@ _postAddChecks = function _postAddChecks(timeline, child) {
       pt = pt._next;
     }
 
-    if (!ratio && tween._startAt && !tween._onUpdate && tween._start) {
-      //if the tween is positioned at the VERY beginning (_start 0) of its parent timeline, it's illegal for the playhead to go back further, so we should not render the recorded startAt values.
-      tween._startAt.render(totalTime, true, force);
-    }
-
-    tween._onUpdate && (suppressEvents || _callback(tween, "onUpdate"));
-
-    if (tTime && tween._repeat && !suppressEvents && tween.parent) {
-      _callback(tween, "onRepeat");
-    }
+    tween._startAt && totalTime < 0 && tween._startAt.render(totalTime, true, true);
+    tween._onUpdate && !suppressEvents && _callback(tween, "onUpdate");
+    tTime && tween._repeat && !suppressEvents && tween.parent && _callback(tween, "onRepeat");
 
     if ((totalTime >= tween._tDur || totalTime < 0) && tween.ratio === ratio) {
-      tween.ratio && _removeFromParent(tween, 1);
+      ratio && _removeFromParent(tween, 1);
 
       if (!suppressEvents) {
-        _callback(tween, tween.ratio ? "onComplete" : "onReverseComplete", true);
+        _callback(tween, ratio ? "onComplete" : "onReverseComplete", true);
 
         tween._prom && tween._prom();
       }
     }
+  } else if (!tween._zTime) {
+    tween._zTime = totalTime;
   }
 },
     _findNextPauseTween = function _findNextPauseTween(animation, prevTime, time) {
@@ -28881,14 +28835,15 @@ _postAddChecks = function _postAddChecks(timeline, child) {
     }
   }
 },
-    _setDuration = function _setDuration(animation, duration, skipUncache) {
+    _setDuration = function _setDuration(animation, duration, skipUncache, leavePlayhead) {
   var repeat = animation._repeat,
-      dur = _round(duration);
-
+      dur = _round(duration) || 0,
+      totalProgress = animation._tTime / animation._tDur;
+  totalProgress && !leavePlayhead && (animation._time *= dur / animation._dur);
   animation._dur = dur;
-  animation._tDur = !repeat ? dur : repeat < 0 ? 1e12 : _round(dur * (repeat + 1) + animation._rDelay * repeat);
-  !skipUncache && _uncache(animation.parent);
-  animation.parent && _setEnd(animation);
+  animation._tDur = !repeat ? dur : repeat < 0 ? 1e10 : _round(dur * (repeat + 1) + animation._rDelay * repeat);
+  totalProgress && !leavePlayhead ? _alignPlayhead(animation, animation._tTime = animation._tDur * totalProgress) : animation.parent && _setEnd(animation);
+  skipUncache || _uncache(animation.parent, animation);
   return animation;
 },
     _onUpdateTotalDuration = function _onUpdateTotalDuration(animation) {
@@ -28917,10 +28872,7 @@ _postAddChecks = function _postAddChecks(timeline, child) {
     i = position.indexOf("=");
 
     if (i < 0) {
-      if (!(position in labels)) {
-        labels[position] = clippedDuration;
-      }
-
+      position in labels || (labels[position] = clippedDuration);
       return labels[position];
     }
 
@@ -28968,7 +28920,7 @@ toArray = function toArray(value, leaveStrings) {
     return .5 - Math.random();
   });
 },
-    // alternative that's a bit faster and more reliably diverse but bigger:   for (let j, v, i = a.length; i; j = ~~(Math.random() * i), v = a[--i], a[i] = a[j], a[j] = v); return a;
+    // alternative that's a bit faster and more reliably diverse but bigger:   for (let j, v, i = a.length; i; j = Math.floor(Math.random() * i), v = a[--i], a[i] = a[j], a[j] = v); return a;
 //for distributing values across an array. Can accept a number, a function or (most commonly) a function which can contain the following properties: {base, amount, from, ease, grid, axis, length, each}. Returns a function that expects the following parameters: index, target, array. Recognizes the following
 distribute = function distribute(v) {
   if (_isFunction(v)) {
@@ -29034,14 +28986,8 @@ distribute = function distribute(v) {
         x = j % wrapAt - originX;
         y = originY - (j / wrapAt | 0);
         distances[j] = d = !axis ? _sqrt(x * x + y * y) : Math.abs(axis === "y" ? y : x);
-
-        if (d > max) {
-          max = d;
-        }
-
-        if (d < min) {
-          min = d;
-        }
+        d > max && (max = d);
+        d < min && (min = d);
       }
 
       from === "random" && shuffle(distances);
@@ -29063,7 +29009,7 @@ distribute = function distribute(v) {
   var p = v < 1 ? Math.pow(10, (v + "").length - 2) : 1; //to avoid floating point math errors (like 24 * 0.1 == 2.4000000000000004), we chop off at a specific number of decimal places (much faster than toFixed()
 
   return function (raw) {
-    return ~~(Math.round(parseFloat(raw) / v) * v * p) / p + (_isNumber(raw) ? 0 : getUnit(raw));
+    return Math.floor(Math.round(parseFloat(raw) / v) * v * p) / p + (_isNumber(raw) ? 0 : getUnit(raw));
   };
 },
     snap = function snap(snapTo, value) {
@@ -29118,7 +29064,7 @@ distribute = function distribute(v) {
 },
     random = function random(min, max, roundingIncrement, returnFunction) {
   return _conditionalReturn(_isArray(min) ? !max : roundingIncrement === true ? !!(roundingIncrement = 0) : !returnFunction, function () {
-    return _isArray(min) ? min[~~(Math.random() * min.length)] : (roundingIncrement = roundingIncrement || 1e-5) && (returnFunction = roundingIncrement < 1 ? Math.pow(10, (roundingIncrement + "").length - 2) : 1) && ~~(Math.round((min + Math.random() * (max - min)) / roundingIncrement) * roundingIncrement * returnFunction) / returnFunction;
+    return _isArray(min) ? min[~~(Math.random() * min.length)] : (roundingIncrement = roundingIncrement || 1e-5) && (returnFunction = roundingIncrement < 1 ? Math.pow(10, (roundingIncrement + "").length - 2) : 1) && Math.floor(Math.round((min + Math.random() * (max - min)) / roundingIncrement) * roundingIncrement * returnFunction) / returnFunction;
   });
 },
     pipe = function pipe() {
@@ -29156,7 +29102,7 @@ distribute = function distribute(v) {
   var range = max - min,
       total = range * 2;
   return _isArray(min) ? _wrapArray(min, wrapYoyo(0, min.length - 1), max) : _conditionalReturn(value, function (value) {
-    value = (total + (value - min) % total) % total;
+    value = (total + (value - min) % total) % total || 0;
     return min + (value > range ? total - value : value);
   });
 },
@@ -29173,7 +29119,7 @@ distribute = function distribute(v) {
     end = value.indexOf(")", i);
     isArray = value.charAt(i + 7) === "[";
     nums = value.substr(i + 7, end - i - 7).match(isArray ? _delimitedValueExp : _strictNumExp);
-    s += value.substr(prev, i - prev) + random(isArray ? nums : +nums[0], +nums[1], +nums[2] || 1e-5);
+    s += value.substr(prev, i - prev) + random(isArray ? nums : +nums[0], isArray ? 0 : +nums[1], +nums[2] || 1e-5);
     prev = end + 1;
   }
 
@@ -29183,7 +29129,7 @@ distribute = function distribute(v) {
   var inRange = inMax - inMin,
       outRange = outMax - outMin;
   return _conditionalReturn(value, function (value) {
-    return outMin + (value - inMin) / inRange * outRange;
+    return outMin + ((value - inMin) / inRange * outRange || 0);
   });
 },
     interpolate = function interpolate(start, end, progress, mutate) {
@@ -29282,10 +29228,7 @@ distribute = function distribute(v) {
     _interrupt = function _interrupt(animation) {
   _removeFromParent(animation);
 
-  if (animation.progress() < 1) {
-    _callback(animation, "onInterrupt");
-  }
-
+  animation.progress() < 1 && _callback(animation, "onInterrupt");
   return animation;
 },
     _quickTween,
@@ -29340,9 +29283,7 @@ distribute = function distribute(v) {
 
   _addGlobal(name, Plugin);
 
-  if (config.register) {
-    config.register(gsap, Plugin, PropTween);
-  }
+  config.register && config.register(gsap, Plugin, PropTween);
 },
 
 /*
@@ -29417,10 +29358,7 @@ _255 = 255,
         l = +a[2] / 100;
         g = l <= .5 ? l * (s + 1) : l + s - l * s;
         r = l * 2 - g;
-
-        if (a.length > 3) {
-          a[3] *= 1; //cast as number
-        }
+        a.length > 3 && (a[3] *= 1); //cast as number
 
         a[0] = _hue(h + 1 / 3, r, g);
         a[1] = _hue(h, r, g);
@@ -29557,42 +29495,43 @@ _tickerActive,
       _adjustedLag = 33,
       _startTime = _getTime(),
       _lastUpdate = _startTime,
-      _gap = 1 / 240,
+      _gap = 1000 / 240,
       _nextTime = _gap,
       _listeners = [],
       _id,
       _req,
       _raf,
       _self,
+      _delta,
+      _i,
       _tick = function _tick(v) {
     var elapsed = _getTime() - _lastUpdate,
         manual = v === true,
         overlap,
-        dispatch;
+        dispatch,
+        time,
+        frame;
 
-    if (elapsed > _lagThreshold) {
-      _startTime += elapsed - _adjustedLag;
-    }
-
+    elapsed > _lagThreshold && (_startTime += elapsed - _adjustedLag);
     _lastUpdate += elapsed;
-    _self.time = (_lastUpdate - _startTime) / 1000;
-    overlap = _self.time - _nextTime;
+    time = _lastUpdate - _startTime;
+    overlap = time - _nextTime;
 
     if (overlap > 0 || manual) {
-      _self.frame++;
-      _nextTime += overlap + (overlap >= _gap ? 0.004 : _gap - overlap);
+      frame = ++_self.frame;
+      _delta = time - _self.time * 1000;
+      _self.time = time = time / 1000;
+      _nextTime += overlap + (overlap >= _gap ? 4 : _gap - overlap);
       dispatch = 1;
     }
 
-    if (!manual) {
-      //make sure the request is made before we dispatch the "tick" event so that timing is maintained. Otherwise, if processing the "tick" requires a bunch of time (like 15ms) and we're using a setTimeout() that's based on 16.7ms, it'd technically take 31.7ms between frames otherwise.
-      _id = _req(_tick);
-    }
+    manual || (_id = _req(_tick)); //make sure the request is made before we dispatch the "tick" event so that timing is maintained. Otherwise, if processing the "tick" requires a bunch of time (like 15ms) and we're using a setTimeout() that's based on 16.7ms, it'd technically take 31.7ms between frames otherwise.
 
     if (dispatch) {
-      _listeners.forEach(function (l) {
-        return l(_self.time, elapsed, _self.frame, v);
-      });
+      for (_i = 0; _i < _listeners.length; _i++) {
+        // use _i and check _listeners.length instead of a variable because a listener could get removed during the loop, and if that happens to an element less than the current index, it'd throw things off in the loop.
+        _listeners[_i](time, _delta, frame, v);
+      }
     }
   };
 
@@ -29601,6 +29540,9 @@ _tickerActive,
     frame: 0,
     tick: function tick() {
       _tick(true);
+    },
+    deltaRatio: function deltaRatio(fps) {
+      return _delta / (1000 / (fps || 60));
     },
     wake: function wake() {
       if (_coreReady) {
@@ -29618,7 +29560,7 @@ _tickerActive,
         _id && _self.sleep();
 
         _req = _raf || function (f) {
-          return setTimeout(f, (_nextTime - _self.time) * 1000 + 1 | 0);
+          return setTimeout(f, _nextTime - _self.time * 1000 + 1 | 0);
         };
 
         _tickerActive = 1;
@@ -29637,8 +29579,8 @@ _tickerActive,
       _adjustedLag = Math.min(adjustedLag, _lagThreshold, 0);
     },
     fps: function fps(_fps) {
-      _gap = 1 / (_fps || 240);
-      _nextTime = _self.time + _gap;
+      _gap = 1000 / (_fps || 240);
+      _nextTime = _self.time * 1000 + _gap;
     },
     add: function add(callback) {
       _listeners.indexOf(callback) < 0 && _listeners.push(callback);
@@ -29647,7 +29589,7 @@ _tickerActive,
     },
     remove: function remove(callback) {
       var i;
-      ~(i = _listeners.indexOf(callback)) && _listeners.splice(i, 1);
+      ~(i = _listeners.indexOf(callback)) && _listeners.splice(i, 1) && _i >= i && _i--;
     },
     _listeners: _listeners
   };
@@ -29687,37 +29629,46 @@ _easeMap = {},
 
   return obj;
 },
+    _valueInParentheses = function _valueInParentheses(value) {
+  var open = value.indexOf("(") + 1,
+      close = value.indexOf(")"),
+      nested = value.indexOf("(", open);
+  return value.substring(open, ~nested && nested < close ? value.indexOf(")", close + 1) : close);
+},
     _configEaseFromString = function _configEaseFromString(name) {
   //name can be a string like "elastic.out(1,0.5)", and pass in _easeMap as obj and it'll parse it out and call the actual function like _easeMap.Elastic.easeOut.config(1,0.5). It will also parse custom ease strings as long as CustomEase is loaded and registered (internally as _easeMap._CE).
   var split = (name + "").split("("),
       ease = _easeMap[split[0]];
-  return ease && split.length > 1 && ease.config ? ease.config.apply(null, ~name.indexOf("{") ? [_parseObjectInString(split[1])] : _parenthesesExp.exec(name)[1].split(",").map(_numericIfPossible)) : _easeMap._CE && _customEaseExp.test(name) ? _easeMap._CE("", name) : ease;
+  return ease && split.length > 1 && ease.config ? ease.config.apply(null, ~name.indexOf("{") ? [_parseObjectInString(split[1])] : _valueInParentheses(name).split(",").map(_numericIfPossible)) : _easeMap._CE && _customEaseExp.test(name) ? _easeMap._CE("", name) : ease;
 },
     _invertEase = function _invertEase(ease) {
   return function (p) {
     return 1 - ease(1 - p);
   };
 },
-    // potential future feature - allow yoyoEase to be set in children and have those affected when the parent/ancestor timeline yoyos. Not sure it's worth the kb.
-// _propagateYoyoEase = (timeline, isYoyo) => {
-// 	let child = timeline._first, ease;
-// 	while (child) {
-// 		if (child instanceof Timeline) {
-// 			_propagateYoyoEase(child, isYoyo);
-// 		} else if (child.vars.yoyoEase && (!child._yoyo || !child._repeat) && child._yoyo !== isYoyo) {
-// 			if (child.timeline) {
-// 				_propagateYoyoEase(child.timeline, isYoyo);
-// 			} else {
-// 				ease = child._ease;
-// 				child._ease = child._yEase;
-// 				child._yEase = ease;
-// 				child._yoyo = isYoyo;
-// 			}
-// 		}
-// 		child = child._next;
-// 	}
-// },
-_parseEase = function _parseEase(ease, defaultEase) {
+    // allow yoyoEase to be set in children and have those affected when the parent/ancestor timeline yoyos.
+_propagateYoyoEase = function _propagateYoyoEase(timeline, isYoyo) {
+  var child = timeline._first,
+      ease;
+
+  while (child) {
+    if (child instanceof Timeline) {
+      _propagateYoyoEase(child, isYoyo);
+    } else if (child.vars.yoyoEase && (!child._yoyo || !child._repeat) && child._yoyo !== isYoyo) {
+      if (child.timeline) {
+        _propagateYoyoEase(child.timeline, isYoyo);
+      } else {
+        ease = child._ease;
+        child._ease = child._yEase;
+        child._yEase = ease;
+        child._yoyo = isYoyo;
+      }
+    }
+
+    child = child._next;
+  }
+},
+    _parseEase = function _parseEase(ease, defaultEase) {
   return !ease ? defaultEase : (_isFunction(ease) ? ease : _easeMap[ease] || _configEaseFromString(ease)) || defaultEase;
 },
     _insertEase = function _insertEase(names, easeIn, easeOut, easeInOut) {
@@ -29882,7 +29833,7 @@ _insertEase("Circ", function (p) {
 });
 
 _insertEase("Sine", function (p) {
-  return -_cos(p * _HALF_PI) + 1;
+  return p === 1 ? 1 : -_cos(p * _HALF_PI) + 1;
 });
 
 _insertEase("Back", _configBack("in"), _configBack("out"), _configBack());
@@ -29944,13 +29895,14 @@ function () {
       this._yoyo = !!vars.yoyo || !!vars.yoyoEase;
     }
 
-    this._ts = vars.reversed ? -1 : 1;
+    this._ts = 1;
 
-    _setDuration(this, +vars.duration, 1);
+    _setDuration(this, +vars.duration, 1, 1);
 
     this.data = vars.data;
     _tickerActive || _ticker.wake();
     parent && _addToTimeline(parent, this, time || time === 0 ? time : parent._time, 1);
+    vars.reversed && this.reverse();
     vars.paused && this.paused(true);
   }
 
@@ -29958,6 +29910,7 @@ function () {
 
   _proto.delay = function delay(value) {
     if (value || value === 0) {
+      this.parent && this.parent.smoothChildTiming && this.startTime(this._start + value - this._delay);
       this._delay = value;
       return this;
     }
@@ -29966,7 +29919,7 @@ function () {
   };
 
   _proto.duration = function duration(value) {
-    return arguments.length ? _setDuration(this, value) : this.totalDuration() && this._dur;
+    return arguments.length ? this.totalDuration(this._repeat > 0 ? value + (value + this._rDelay) * this._repeat : value) : this.totalDuration() && this._dur;
   };
 
   _proto.totalDuration = function totalDuration(value) {
@@ -29985,20 +29938,10 @@ function () {
       return this._tTime;
     }
 
-    var parent = this.parent || this._dp;
+    var parent = this._dp;
 
     if (parent && parent.smoothChildTiming && this._ts) {
-      // if (!parent._dp && parent._time === parent._dur) { // if a root timeline completes...and then a while later one of its children resumes, we must shoot the playhead forward to where it should be raw-wise, otherwise the child will jump to the end. Down side: this assumes it's using the _ticker.time as a reference.
-      // 	parent._time = _ticker.time - parent._start;
-      // }
-      this._start = _round(parent._time - (this._ts > 0 ? _totalTime / this._ts : ((this._dirty ? this.totalDuration() : this._tDur) - _totalTime) / -this._ts));
-
-      _setEnd(this);
-
-      if (!parent._dirty) {
-        //for performance improvement. If the parent's cache is already dirty, it already took care of marking the ancestors as dirty too, so skip the function call here.
-        _uncache(parent);
-      } //in case any of the ancestor timelines had completed but should now be enabled, we should reset their totalTime() which will also ensure that they're lined up properly and enabled. Skip for animations that are on the root (wasteful). Example: a TimelineLite.exportRoot() is performed when there's a paused tween on the root, the export will not complete until that tween is unpaused, but imagine a child gets restarted later, after all [unpaused] tweens have completed. The start of that child would get pushed out, but one of the ancestors may have completed.
+      _alignPlayhead(this, _totalTime); //in case any of the ancestor timelines had completed but should now be enabled, we should reset their totalTime() which will also ensure that they're lined up properly and enabled. Skip for animations that are on the root (wasteful). Example: a TimelineLite.exportRoot() is performed when there's a paused tween on the root, the export will not complete until that tween is unpaused, but imagine a child gets restarted later, after all [unpaused] tweens have completed. The start of that child would get pushed out, but one of the ancestors may have completed.
 
 
       while (parent.parent) {
@@ -30009,13 +29952,14 @@ function () {
         parent = parent.parent;
       }
 
-      if (!this.parent && this._dp.autoRemoveChildren) {
+      if (!this.parent && this._dp.autoRemoveChildren && (this._ts > 0 && _totalTime < this._tDur || this._ts < 0 && _totalTime > 0 || !this._tDur && !_totalTime)) {
         //if the animation doesn't have a parent, put it back into its last parent (recorded as _dp for exactly cases like this). Limit to parents with autoRemoveChildren (like globalTimeline) so that if the user manually removes an animation from a timeline and then alters its playhead, it doesn't get added back in.
         _addToTimeline(this._dp, this, this._start - this._delay);
       }
     }
 
-    if (this._tTime !== _totalTime || !this._dur && !suppressEvents || this._initted && Math.abs(this._zTime) === _tinyNum) {
+    if (this._tTime !== _totalTime || !this._dur && !suppressEvents || this._initted && Math.abs(this._zTime) === _tinyNum || !_totalTime && !this._initted && (this.add || this._ptLookup)) {
+      // check for _ptLookup on a Tween instance to ensure it has actually finished being instantiated, otherwise if this.reverse() gets called in the Animation constructor, it could trigger a render() here even though the _targets weren't populated, thus when _init() is called there won't be any PropTweens (it'll act like the tween is non-functional)
       this._ts || (this._pTime = _totalTime); // otherwise, if an animation is paused, then the playhead is moved back to zero, then resumed, it'd revert back to the original time at the pause
 
       _lazySafeRender(this, _totalTime, suppressEvents);
@@ -30040,43 +29984,52 @@ function () {
     var cycleDuration = this.duration() + this._rDelay;
 
     return arguments.length ? this.totalTime(this._time + (value - 1) * cycleDuration, suppressEvents) : this._repeat ? _animationCycle(this._tTime, cycleDuration) + 1 : 1;
-  };
+  } // potential future addition:
+  // isPlayingBackwards() {
+  // 	let animation = this,
+  // 		orientation = 1; // 1 = forward, -1 = backward
+  // 	while (animation) {
+  // 		orientation *= animation.reversed() || (animation.repeat() && !(animation.iteration() & 1)) ? -1 : 1;
+  // 		animation = animation.parent;
+  // 	}
+  // 	return orientation < 0;
+  // }
+  ;
 
   _proto.timeScale = function timeScale(value) {
     if (!arguments.length) {
-      return this._ts || this._pauseTS || 0;
+      return this._rts === -_tinyNum ? 0 : this._rts; // recorded timeScale. Special case: if someone calls reverse() on an animation with timeScale of 0, we assign it -_tinyNum to remember it's reversed.
     }
 
-    if (this._pauseTS !== null) {
-      this._pauseTS = value;
+    if (this._rts === value) {
       return this;
     }
 
     var tTime = this.parent && this._ts ? _parentToChildTotalTime(this.parent._time, this) : this._tTime; // make sure to do the parentToChildTotalTime() BEFORE setting the new _ts because the old one must be used in that calculation.
+    // prioritize rendering where the parent's playhead lines up instead of this._tTime because there could be a tween that's animating another tween's timeScale in the same rendering loop (same parent), thus if the timeScale tween renders first, it would alter _start BEFORE _tTime was set on that tick (in the rendering loop), effectively freezing it until the timeScale tween finishes.
 
-    this._ts = value; // prioritize rendering where the parent's playhead lines up instead of this._tTime because there could be a tween that's animating another tween's timeScale in the same rendering loop (same parent), thus if the timeScale tween renders first, it would alter _start BEFORE _tTime was set on that tick (in the rendering loop), effectively freezing it until the timeScale tween finishes.
+    this._rts = +value || 0;
+    this._ts = this._ps || value === -_tinyNum ? 0 : this._rts; // _ts is the functional timeScale which would be 0 if the animation is paused.
 
-    return _recacheAncestors(this.totalTime(tTime, true));
+    return _recacheAncestors(this.totalTime(_clamp(-this._delay, this._tDur, tTime), true));
   };
 
   _proto.paused = function paused(value) {
-    var isPaused = !this._ts;
-
     if (!arguments.length) {
-      return isPaused;
+      return this._ps;
     }
 
-    if (isPaused !== value) {
+    if (this._ps !== value) {
+      this._ps = value;
+
       if (value) {
-        this._pauseTS = this._ts;
         this._pTime = this._tTime || Math.max(-this._delay, this.rawTime()); // if the pause occurs during the delay phase, make sure that's factored in when resuming.
 
-        this._ts = this._act = 0; //we use a timeScale of 0 to indicate a paused state, but we record the old "real" timeScale as _pauseTS so we can revert when unpaused.
+        this._ts = this._act = 0; // _ts is the functional timeScale, so a paused tween would effectively have a timeScale of 0. We record the "real" timeScale as _rts (recorded time scale)
       } else {
         _wake();
 
-        this._ts = this._pauseTS || 1;
-        this._pauseTS = null; //only defer to _pTime (pauseTime) if tTime is zero. Remember, someone could pause() an animation, then scrub the playhead and resume(). If the parent doesn't have smoothChildTiming, we render at the rawTime() because the startTime won't get updated.
+        this._ts = this._rts; //only defer to _pTime (pauseTime) if tTime is zero. Remember, someone could pause() an animation, then scrub the playhead and resume(). If the parent doesn't have smoothChildTiming, we render at the rawTime() because the startTime won't get updated.
 
         this.totalTime(this.parent && !this.parent.smoothChildTiming ? this.rawTime() : this._tTime || this._pTime, this.progress() === 1 && (this._tTime -= _tinyNum) && Math.abs(this._zTime) !== _tinyNum); // edge case: animation.progress(1).pause().play() wouldn't render again because the playhead is already at the end, but the call to totalTime() below will add it back to its parent...and not remove it again (since removing only happens upon rendering at a new time). Offsetting the _tTime slightly is done simply to cause the final render in totalTime() that'll pop it off its timeline (if autoRemoveChildren is true, of course). Check to make sure _zTime isn't -_tinyNum to avoid an edge case where the playhead is pushed to the end but INSIDE a tween/callback, the timeline itself is paused thus halting rendering and leaving a few unrendered. When resuming, it wouldn't render those otherwise.
       }
@@ -30087,10 +30040,9 @@ function () {
 
   _proto.startTime = function startTime(value) {
     if (arguments.length) {
-      if (this.parent && this.parent._sort) {
-        _addToTimeline(this.parent, this, value - this._delay);
-      }
-
+      this._start = value;
+      var parent = this.parent || this._dp;
+      parent && (parent._sort || !this.parent) && _addToTimeline(parent, this, value - this._delay);
       return this;
     }
 
@@ -30105,16 +30057,19 @@ function () {
     var parent = this.parent || this._dp; // _dp = detatched parent
 
     return !parent ? this._tTime : wrapRepeats && (!this._ts || this._repeat && this._time && this.totalProgress() < 1) ? this._tTime % (this._dur + this._rDelay) : !this._ts ? this._tTime : _parentToChildTotalTime(parent.rawTime(wrapRepeats), this);
-  } // globalTime(rawTime) {
-  // 	let animation = this,
-  // 		time = arguments.length ? rawTime : animation.rawTime();
-  // 	while (animation) {
-  // 		time = animation._start + time / (animation._ts || 1);
-  // 		animation = animation.parent;
-  // 	}
-  // 	return time;
-  // }
-  ;
+  };
+
+  _proto.globalTime = function globalTime(rawTime) {
+    var animation = this,
+        time = arguments.length ? rawTime : animation.rawTime();
+
+    while (animation) {
+      time = animation._start + time / (animation._ts || 1);
+      animation = animation._dp;
+    }
+
+    return time;
+  };
 
   _proto.repeat = function repeat(value) {
     if (arguments.length) {
@@ -30152,26 +30107,17 @@ function () {
   };
 
   _proto.play = function play(from, suppressEvents) {
-    if (from != null) {
-      this.seek(from, suppressEvents);
-    }
-
+    from != null && this.seek(from, suppressEvents);
     return this.reversed(false).paused(false);
   };
 
   _proto.reverse = function reverse(from, suppressEvents) {
-    if (from != null) {
-      this.seek(from || this.totalDuration(), suppressEvents);
-    }
-
+    from != null && this.seek(from || this.totalDuration(), suppressEvents);
     return this.reversed(true).paused(false);
   };
 
   _proto.pause = function pause(atTime, suppressEvents) {
-    if (atTime != null) {
-      this.seek(atTime, suppressEvents);
-    }
-
+    atTime != null && this.seek(atTime, suppressEvents);
     return this.paused(true);
   };
 
@@ -30180,18 +30126,13 @@ function () {
   };
 
   _proto.reversed = function reversed(value) {
-    var ts = this._ts || this._pauseTS || 0;
-
     if (arguments.length) {
-      if (value !== this.reversed()) {
-        this[this._pauseTS === null ? "_ts" : "_pauseTS"] = Math.abs(ts) * (value ? -1 : 1);
-        this.totalTime(this._tTime, true);
-      }
+      !!value !== this.reversed() && this.timeScale(-this._rts || (value ? -_tinyNum : 0)); // in case timeScale is zero, reversing would have no effect so we use _tinyNum.
 
       return this;
     }
 
-    return ts < 0;
+    return this._rts < 0;
   };
 
   _proto.invalidate = function invalidate() {
@@ -30200,11 +30141,11 @@ function () {
     return this;
   };
 
-  _proto.isActive = function isActive(hasStarted) {
+  _proto.isActive = function isActive() {
     var parent = this.parent || this._dp,
         start = this._start,
         rawTime;
-    return !!(!parent || this._ts && (this._initted || !hasStarted) && parent.isActive(hasStarted) && (rawTime = parent.rawTime(true)) >= start && rawTime < this.endTime(true) - _tinyNum);
+    return !!(!parent || this._ts && this._initted && parent.isActive() && (rawTime = parent.rawTime(true)) >= start && rawTime < this.endTime(true) - _tinyNum);
   };
 
   _proto.eventCallback = function eventCallback(type, callback, params) {
@@ -30215,14 +30156,8 @@ function () {
         delete vars[type];
       } else {
         vars[type] = callback;
-
-        if (params) {
-          vars[type + "Params"] = params;
-        }
-
-        if (type === "onUpdate") {
-          this._onUpdate = callback;
-        }
+        params && (vars[type + "Params"] = params);
+        type === "onUpdate" && (this._onUpdate = callback);
       }
 
       return this;
@@ -30278,7 +30213,8 @@ _setDefaults(Animation.prototype, {
   ratio: 0,
   _zTime: -_tinyNum,
   _prom: 0,
-  _pauseTS: null
+  _ps: false,
+  _rts: 1
 });
 /*
  * -------------------------------------------------
@@ -30305,6 +30241,7 @@ function (_Animation) {
     _this.autoRemoveChildren = !!vars.autoRemoveChildren;
     _this._sort = _isNotFalse(vars.sortChildren);
     _this.parent && _postAddChecks(_this.parent, _assertThisInitialized(_this));
+    vars.scrollTrigger && _scrollTrigger(_assertThisInitialized(_this), vars.scrollTrigger);
     return _this;
   }
 
@@ -30393,14 +30330,9 @@ function (_Animation) {
       prevPaused = !timeScale;
 
       if (crossingStart) {
-        if (!dur) {
-          prevTime = this._zTime;
-        }
+        dur || (prevTime = this._zTime); //when the playhead arrives at EXACTLY time 0 (right on top) of a zero-duration timeline, we need to discern if events are suppressed so that when the playhead moves again (next time), it'll trigger the callback. If events are NOT suppressed, obviously the callback would be triggered in this render. Basically, the callback should fire either when the playhead ARRIVES or LEAVES this exact spot, not both. Imagine doing a timeline.seek(0) and there's a callback that sits at 0. Since events are suppressed on that seek() by default, nothing will fire, but when the playhead moves off of that position, the callback should fire. This behavior is what people intuitively expect.
 
-        if (totalTime || !suppressEvents) {
-          //when the playhead arrives at EXACTLY time 0 (right on top) of a zero-duration timeline, we need to discern if events are suppressed so that when the playhead moves again (next time), it'll trigger the callback. If events are NOT suppressed, obviously the callback would be triggered in this render. Basically, the callback should fire either when the playhead ARRIVES or LEAVES this exact spot, not both. Imagine doing a timeline.seek(0) and there's a callback that sits at 0. Since events are suppressed on that seek() by default, nothing will fire, but when the playhead moves off of that position, the callback should fire. This behavior is what people intuitively expect.
-          this._zTime = totalTime;
-        }
+        (totalTime || !suppressEvents) && (this._zTime = totalTime);
       }
 
       if (this._repeat) {
@@ -30409,18 +30341,23 @@ function (_Animation) {
         cycleDuration = dur + this._rDelay;
         time = _round(tTime % cycleDuration); //round to avoid floating point errors. (4 % 0.8 should be 0 but some browsers report it as 0.79999999!)
 
-        if (time > dur || tDur === tTime) {
+        if (tTime === tDur) {
+          // the tDur === tTime is for edge cases where there's a lengthy decimal on the duration and it may reach the very end but the time is rendered as not-quite-there (remember, tDur is rounded to 4 decimals whereas dur isn't)
+          iteration = this._repeat;
           time = dur;
-        }
+        } else {
+          iteration = ~~(tTime / cycleDuration);
 
-        iteration = ~~(tTime / cycleDuration);
+          if (iteration && iteration === tTime / cycleDuration) {
+            time = dur;
+            iteration--;
+          }
 
-        if (iteration && iteration === tTime / cycleDuration) {
-          time = dur;
-          iteration--;
+          time > dur && (time = dur);
         }
 
         prevIteration = _animationCycle(this._tTime, cycleDuration);
+        !prevTime && this._tTime && prevIteration !== iteration && (prevIteration = iteration); // edge case - if someone does addPause() at the very beginning of a repeating timeline, that pause is technically at the same spot as the end which causes this._time to get set to 0 when the totalTime would normally place the playhead at the end. See https://greensock.com/forums/topic/23823-closing-nav-animation-not-working-on-ie-and-iphone-6-maybe-other-older-browser/?tab=comments#comment-113005
 
         if (yoyo && iteration & 1) {
           time = dur - time;
@@ -30439,24 +30376,20 @@ function (_Animation) {
         if (iteration !== prevIteration && !this._lock) {
           var rewinding = yoyo && prevIteration & 1,
               doesWrap = rewinding === (yoyo && iteration & 1);
-
-          if (iteration < prevIteration) {
-            rewinding = !rewinding;
-          }
-
+          iteration < prevIteration && (rewinding = !rewinding);
           prevTime = rewinding ? 0 : dur;
           this._lock = 1;
-          this.render(prevTime, suppressEvents, !dur)._lock = 0;
-
-          if (!suppressEvents && this.parent) {
-            _callback(this, "onRepeat");
-          }
-
+          this.render(prevTime || (isYoyo ? 0 : _round(iteration * cycleDuration)), suppressEvents, !dur)._lock = 0;
+          !suppressEvents && this.parent && _callback(this, "onRepeat");
           this.vars.repeatRefresh && !isYoyo && (this.invalidate()._lock = 1);
 
           if (prevTime !== this._time || prevPaused !== !this._ts) {
             return this;
           }
+
+          dur = this._dur; // in case the duration changed in the onRepeat
+
+          tDur = this._tDur;
 
           if (doesWrap) {
             this._lock = 2;
@@ -30470,8 +30403,9 @@ function (_Animation) {
           if (!this._ts && !prevPaused) {
             return this;
           } //in order for yoyoEase to work properly when there's a stagger, we must swap out the ease in each sub-tween.
-          //_propagateYoyoEase(this, isYoyo);
 
+
+          _propagateYoyoEase(this, isYoyo);
         }
       }
 
@@ -30493,9 +30427,7 @@ function (_Animation) {
         this._zTime = totalTime;
       }
 
-      if (!prevTime && time && !suppressEvents) {
-        _callback(this, "onStart");
-      }
+      !prevTime && time && !suppressEvents && _callback(this, "onStart");
 
       if (time >= prevTime && totalTime >= 0) {
         child = this._first;
@@ -30564,17 +30496,14 @@ function (_Animation) {
         }
       }
 
-      if (this._onUpdate && !suppressEvents) {
-        _callback(this, "onUpdate", true);
-      }
+      this._onUpdate && !suppressEvents && _callback(this, "onUpdate", true);
+      if (tTime === tDur && tDur >= this.totalDuration() || !tTime && prevTime) if (prevStart === this._start || Math.abs(timeScale) !== Math.abs(this._ts)) if (!this._lock) {
+        (totalTime || !dur) && (tTime === tDur && this._ts > 0 || !tTime && this._ts < 0) && _removeFromParent(this, 1); // don't remove if the timeline is reversed and the playhead isn't at 0, otherwise tl.progress(1).reverse() won't work. Only remove if the playhead is at the end and timeScale is positive, or if the playhead is at 0 and the timeScale is negative.
 
-      if (tTime === tDur && tDur >= this.totalDuration() || !tTime && this._ts < 0) if (prevStart === this._start || Math.abs(timeScale) !== Math.abs(this._ts)) {
-        (totalTime || !dur) && (totalTime && this._ts > 0 || !tTime && this._ts < 0) && _removeFromParent(this, 1); // don't remove if the timeline is reversed and the playhead isn't at 0, otherwise tl.progress(1).reverse() won't work. Only remove if the playhead is at the end and timeScale is positive, or if the playhead is at 0 and the timeScale is negative.
-
-        if (!suppressEvents && !(totalTime < 0 && !prevTime)) {
+        if (!suppressEvents && !(totalTime < 0 && !prevTime) && (tTime || prevTime)) {
           _callback(this, tTime === tDur ? "onComplete" : "onReverseComplete", true);
 
-          this._prom && this._prom();
+          this._prom && !(tTime < tDur && this.timeScale() > 0) && this._prom();
         }
       }
     }
@@ -30594,7 +30523,7 @@ function (_Animation) {
         child.forEach(function (obj) {
           return _this2.add(obj, position);
         });
-        return _uncache(this);
+        return this;
       }
 
       if (_isString(child)) {
@@ -30634,17 +30563,10 @@ function (_Animation) {
     while (child) {
       if (child._start >= ignoreBeforeTime) {
         if (child instanceof Tween) {
-          if (tweens) {
-            a.push(child);
-          }
+          tweens && a.push(child);
         } else {
-          if (timelines) {
-            a.push(child);
-          }
-
-          if (nested) {
-            a.push.apply(a, child.getChildren(true, tweens, timelines));
-          }
+          timelines && a.push(child);
+          nested && a.push.apply(a, child.getChildren(true, tweens, timelines));
         }
       }
 
@@ -30690,7 +30612,7 @@ function (_Animation) {
 
     this._forcing = 1;
 
-    if (!this.parent && !this._dp && this._ts) {
+    if (!this._dp && this._ts) {
       //special case for the global timeline (or any other that has no parent or detached parent).
       this._start = _round(_ticker.time - (this._ts > 0 ? _totalTime2 / this._ts : (this.totalDuration() - _totalTime2) / -this._ts));
     }
@@ -30746,11 +30668,14 @@ function (_Animation) {
     var a = [],
         parsedTargets = toArray(targets),
         child = this._first,
-        children;
+        isGlobalTime = _isNumber(onlyActive),
+        // a number is interpreted as a global time. If the animation spans
+    children;
 
     while (child) {
       if (child instanceof Tween) {
-        if (_arrayContainsAny(child._targets, parsedTargets) && (!onlyActive || child.isActive(onlyActive === "started"))) {
+        if (_arrayContainsAny(child._targets, parsedTargets) && (isGlobalTime ? (!_overwritingTween || child._initted && child._ts) && child.globalTime(0) <= onlyActive && child.globalTime(child.totalDuration()) > onlyActive : !onlyActive || child.isActive())) {
+          // note: if this is for overwriting, it should only be for tweens that aren't paused and are initted.
           a.push(child);
         }
       } else if ((children = child.getTweensOf(parsedTargets, onlyActive)).length) {
@@ -30776,19 +30701,12 @@ function (_Animation) {
       ease: "none",
       lazy: false,
       time: endTime,
-      duration: vars.duration || Math.abs(endTime - (startAt && "time" in startAt ? startAt.time : tl._time)) / tl.timeScale() || _tinyNum,
+      duration: vars.duration || Math.abs((endTime - (startAt && "time" in startAt ? startAt.time : tl._time)) / tl.timeScale()) || _tinyNum,
       onStart: function onStart() {
         tl.pause();
-        var duration = vars.duration || Math.abs(endTime - tl._time) / tl.timeScale();
-
-        if (tween._dur !== duration) {
-          _setDuration(tween, duration).render(tween._time, true, true);
-        }
-
-        if (_onStart) {
-          //in case the user had an onStart in the vars - we don't want to overwrite it.
-          _onStart.apply(tween, onStartParams || []);
-        }
+        var duration = vars.duration || Math.abs((endTime - tl._time) / tl.timeScale());
+        tween._dur !== duration && _setDuration(tween, duration, 0, 1).render(tween._time, true, true);
+        _onStart && _onStart.apply(tween, onStartParams || []); //in case the user had an onStart in the vars - we don't want to overwrite it.
       }
     }));
 
@@ -30839,6 +30757,7 @@ function (_Animation) {
     while (child) {
       if (child._start >= ignoreBeforeTime) {
         child._start += amount;
+        child._end += amount;
       }
 
       child = child._next;
@@ -30881,12 +30800,8 @@ function (_Animation) {
       child = next;
     }
 
-    this._time = this._tTime = 0;
-
-    if (includeLabels) {
-      this.labels = {};
-    }
-
+    this._time = this._tTime = this._pTime = 0;
+    includeLabels && (this.labels = {});
     return _uncache(this);
   };
 
@@ -30896,12 +30811,11 @@ function (_Animation) {
         child = self._last,
         prevStart = _bigNum,
         prev,
-        end,
         start,
         parent;
 
     if (arguments.length) {
-      return self._repeat < 0 ? self : self.timeScale(self.totalDuration() / value);
+      return self.timeScale((self._repeat < 0 ? self.duration() : self.totalDuration()) / (self.reversed() ? -value : value));
     }
 
     if (self._dirty) {
@@ -30910,9 +30824,7 @@ function (_Animation) {
       while (child) {
         prev = child._prev; //record it here in case the tween changes position in the sequence...
 
-        if (child._dirty) {
-          child.totalDuration(); //could change the tween._startTime, so make sure the animation's cache is clean before analyzing it.
-        }
+        child._dirty && child.totalDuration(); //could change the tween._startTime, so make sure the animation's cache is clean before analyzing it.
 
         start = child._start;
 
@@ -30935,20 +30847,15 @@ function (_Animation) {
             self._tTime -= start;
           }
 
-          self.shiftChildren(-start, false, -1e20);
+          self.shiftChildren(-start, false, -1e999);
           prevStart = 0;
         }
 
-        end = _setEnd(child);
-
-        if (end > max && child._ts) {
-          max = end;
-        }
-
+        child._end > max && child._ts && (max = child._end);
         child = prev;
       }
 
-      _setDuration(self, self === _globalTimeline && self._time > max ? self._time : Math.min(_bigNum, max), 1);
+      _setDuration(self, self === _globalTimeline && self._time > max ? self._time : max, 1, 1);
 
       self._dirty = 0;
     }
@@ -30971,9 +30878,7 @@ function (_Animation) {
           child = child._next;
         }
 
-        if (!child) {
-          _ticker.sleep();
-        }
+        child || _ticker.sleep();
       }
     }
   };
@@ -31060,10 +30965,7 @@ var _addComplexStringPropTween = function _addComplexStringPropTween(target, pro
   return pt;
 },
     _addPropTween = function _addPropTween(target, prop, start, end, index, targets, modifier, stringFilter, funcParam) {
-  if (_isFunction(end)) {
-    end = end(index || 0, target, targets);
-  }
-
+  _isFunction(end) && (end = end(index || 0, target, targets));
   var currentValue = target[prop],
       parsedStart = start !== "get" ? start : !_isFunction(currentValue) ? currentValue : funcParam ? target[prop.indexOf("set") || !_isFunction(target["get" + prop.substr(3)]) ? prop : "get" + prop.substr(3)](funcParam) : target[prop](),
       setter = !_isFunction(currentValue) ? _setterPlain : funcParam ? _setterFuncWithParam : _setterFunc,
@@ -31080,17 +30982,10 @@ var _addComplexStringPropTween = function _addComplexStringPropTween(target, pro
   }
 
   if (parsedStart !== end) {
-    if (!isNaN(parsedStart + end)) {
+    if (!isNaN(parsedStart * end)) {
       pt = new PropTween(this._pt, target, prop, +parsedStart || 0, end - (parsedStart || 0), typeof currentValue === "boolean" ? _renderBoolean : _renderPlain, 0, setter);
-
-      if (funcParam) {
-        pt.fp = funcParam;
-      }
-
-      if (modifier) {
-        pt.modifier(modifier, this, target);
-      }
-
+      funcParam && (pt.fp = funcParam);
+      modifier && pt.modifier(modifier, this, target);
       return this._pt = pt;
     }
 
@@ -31100,11 +30995,9 @@ var _addComplexStringPropTween = function _addComplexStringPropTween(target, pro
 },
     //creates a copy of the vars object and processes any function-based values (putting the resulting values directly into the copy) as well as strings with "random()" in them. It does NOT process relative values.
 _processVars = function _processVars(vars, index, target, targets, tween) {
-  if (_isFunction(vars)) {
-    vars = _parseFuncOrString(vars, tween, index, target, targets);
-  }
+  _isFunction(vars) && (vars = _parseFuncOrString(vars, tween, index, target, targets));
 
-  if (!_isObject(vars) || vars.style && vars.nodeType || _isArray(vars)) {
+  if (!_isObject(vars) || vars.style && vars.nodeType || _isArray(vars) || _isTypedArray(vars)) {
     return _isString(vars) ? _parseFuncOrString(vars, tween, index, target, targets) : vars;
   }
 
@@ -31169,12 +31062,9 @@ _initTween = function _initTween(tween, time) {
       plugin,
       ptLookup,
       index,
-      harnessVars;
-
-  if (tl && (!keyframes || !ease)) {
-    ease = "none";
-  }
-
+      harnessVars,
+      overwritten;
+  tl && (!keyframes || !ease) && (ease = "none");
   tween._ease = _parseEase(ease, _defaults.ease);
   tween._yEase = yoyoEase ? _invertEase(_parseEase(yoyoEase === true ? ease : yoyoEase, _defaults.ease)) : 0;
 
@@ -31187,9 +31077,11 @@ _initTween = function _initTween(tween, time) {
 
   if (!tl) {
     //if there's an internal timeline, skip all the parsing because we passed that task down the chain.
-    if (prevStartAt) {
-      prevStartAt.render(-1, true).kill();
-    }
+    harness = targets[0] ? _getCache(targets[0]).harness : 0;
+    harnessVars = harness && vars[harness.prop]; //someone may need to specify CSS-specific values AND non-CSS values, like if the element has an "x" property plus it's a standard DOM element. We allow people to distinguish by wrapping plugin-specific stuff in a css:{} object for example.
+
+    cleanVars = _copyExcluding(vars, _reservedProps);
+    prevStartAt && prevStartAt.render(-1, true).kill();
 
     if (startAt) {
       _removeFromParent(tween._startAt = Tween.set(targets, _setDefaults({
@@ -31209,8 +31101,9 @@ _initTween = function _initTween(tween, time) {
 
       if (immediateRender) {
         if (time > 0) {
-          !autoRevert && (tween._startAt = 0); //tweens that render immediately (like most from() and fromTo() tweens) shouldn't revert when their parent timeline's playhead goes backward past the startTime because the initial render could have happened anytime and it shouldn't be directly correlated to this tween's startTime. Imagine setting up a complex animation where the beginning states of various objects are rendered immediately but the tween doesn't happen for quite some time - if we revert to the starting values as soon as the playhead goes backward past the tween's startTime, it will throw things off visually. Reversion should only happen in Timeline instances where immediateRender was false or when autoRevert is explicitly set to true.
-        } else if (dur) {
+          autoRevert || (tween._startAt = 0); //tweens that render immediately (like most from() and fromTo() tweens) shouldn't revert when their parent timeline's playhead goes backward past the startTime because the initial render could have happened anytime and it shouldn't be directly correlated to this tween's startTime. Imagine setting up a complex animation where the beginning states of various objects are rendered immediately but the tween doesn't happen for quite some time - if we revert to the starting values as soon as the playhead goes backward past the tween's startTime, it will throw things off visually. Reversion should only happen in Timeline instances where immediateRender was false or when autoRevert is explicitly set to true.
+        } else if (dur && !(time < 0 && prevStartAt)) {
+          time && (tween._zTime = time);
           return; //we skip initialization here so that overwriting doesn't occur until the tween actually begins. Otherwise, if you create several immediateRender:true tweens of the same target/properties to drop into a Timeline, the last one created would overwrite the first ones because they didn't get placed into the timeline yet before the first render occurs and kicks in overwriting.
         }
       }
@@ -31219,12 +31112,9 @@ _initTween = function _initTween(tween, time) {
       if (prevStartAt) {
         !autoRevert && (tween._startAt = 0);
       } else {
-        if (time) {
-          //in rare cases (like if a from() tween runs and then is invalidate()-ed), immediateRender could be true but the initial forced-render gets skipped, so there's no need to force the render in this context when the _time is greater than 0
-          immediateRender = false;
-        }
+        time && (immediateRender = false); //in rare cases (like if a from() tween runs and then is invalidate()-ed), immediateRender could be true but the initial forced-render gets skipped, so there's no need to force the render in this context when the _time is greater than 0
 
-        _removeFromParent(tween._startAt = Tween.set(targets, _merge(_copyExcluding(vars, _reservedProps), {
+        p = _setDefaults({
           overwrite: false,
           data: "isFromStart",
           //we tag the tween with as "isFromStart" so that if [inside a plugin] we need to only do something at the very END of a tween, we have a way of identifying this tween as merely the one that's setting the beginning values for a "from()" tween. For example, clearProps in CSSPlugin should only get applied at the very END of a tween and without this tag, from(...{height:100, clearProps:"height", delay:1}) would wipe the height at the beginning of the tween and after 1 second, it'd kick back in.
@@ -31234,7 +31124,10 @@ _initTween = function _initTween(tween, time) {
           stagger: 0,
           parent: parent //ensures that nested tweens that had a stagger are handled properly, like gsap.from(".class", {y:gsap.utils.wrap([-100,100])})
 
-        })));
+        }, cleanVars);
+        harnessVars && (p[harness.prop] = harnessVars); // in case someone does something like .from(..., {css:{}})
+
+        _removeFromParent(tween._startAt = Tween.set(targets, p));
 
         if (!immediateRender) {
           _initTween(tween._startAt, _tinyNum); //ensures that the initial values are recorded
@@ -31245,22 +31138,14 @@ _initTween = function _initTween(tween, time) {
       }
     }
 
-    cleanVars = _copyExcluding(vars, _reservedProps);
     tween._pt = 0;
-    harness = targets[0] ? _getCache(targets[0]).harness : 0;
-    harnessVars = harness && vars[harness.prop]; //someone may need to specify CSS-specific values AND non-CSS values, like if the element has an "x" property plus it's a standard DOM element. We allow people to distinguish by wrapping plugin-specific stuff in a css:{} object for example.
-
     lazy = dur && _isNotFalse(lazy) || lazy && !dur;
 
     for (i = 0; i < targets.length; i++) {
       target = targets[i];
       gsData = target._gsap || _harness(targets)[i]._gsap;
       tween._ptLookup[i] = ptLookup = {};
-
-      if (_lazyLookup[gsData.id]) {
-        _lazyRender(); //if other tweens of the same target have recently initted but haven't rendered yet, we've got to force the render so that the starting values are correct (imagine populating a timeline with a bunch of sequential tweens and then jumping to the end)
-
-      }
+      _lazyLookup[gsData.id] && _lazyRender(); //if other tweens of the same target have recently initted but haven't rendered yet, we've got to force the render so that the starting values are correct (imagine populating a timeline with a bunch of sequential tweens and then jumping to the end)
 
       index = fullTargets === targets ? i : fullTargets.indexOf(target);
 
@@ -31271,55 +31156,42 @@ _initTween = function _initTween(tween, time) {
           ptLookup[name] = pt;
         });
 
-        if (plugin.priority) {
-          hasPriority = 1;
-        }
+        plugin.priority && (hasPriority = 1);
       }
 
       if (!harness || harnessVars) {
         for (p in cleanVars) {
           if (_plugins[p] && (plugin = _checkPlugin(p, cleanVars, tween, index, target, fullTargets))) {
-            if (plugin.priority) {
-              hasPriority = 1;
-            }
+            plugin.priority && (hasPriority = 1);
           } else {
             ptLookup[p] = pt = _addPropTween.call(tween, target, p, "get", cleanVars[p], index, fullTargets, 0, vars.stringFilter);
           }
         }
       }
 
-      if (tween._op && tween._op[i]) {
-        tween.kill(target, tween._op[i]);
-      }
+      tween._op && tween._op[i] && tween.kill(target, tween._op[i]);
 
       if (autoOverwrite && tween._pt) {
         _overwritingTween = tween;
 
-        _globalTimeline.killTweensOf(target, ptLookup, "started"); //Also make sure the overwriting doesn't overwrite THIS tween!!!
+        _globalTimeline.killTweensOf(target, ptLookup, tween.globalTime(0)); //Also make sure the overwriting doesn't overwrite THIS tween!!!
 
 
+        overwritten = !tween.parent;
         _overwritingTween = 0;
       }
 
-      if (tween._pt && lazy) {
-        _lazyLookup[gsData.id] = 1;
-      }
+      tween._pt && lazy && (_lazyLookup[gsData.id] = 1);
     }
 
-    if (hasPriority) {
-      _sortPropTweensByPriority(tween);
-    }
-
-    if (tween._onInit) {
-      //plugins like RoundProps must wait until ALL of the PropTweens are instantiated. In the plugin's init() function, it sets the _onInit on the tween instance. May not be pretty/intuitive, but it's fast and keeps file size down.
-      tween._onInit(tween);
-    }
+    hasPriority && _sortPropTweensByPriority(tween);
+    tween._onInit && tween._onInit(tween); //plugins like RoundProps must wait until ALL of the PropTweens are instantiated. In the plugin's init() function, it sets the _onInit on the tween instance. May not be pretty/intuitive, but it's fast and keeps file size down.
   }
 
   tween._from = !tl && !!vars.runBackwards; //nested timelines should never run backwards - the backwards-ness is in the child tweens.
 
   tween._onUpdate = onUpdate;
-  tween._initted = 1;
+  tween._initted = (!tween._op || tween._pt) && !overwritten; // if overwrittenProps resulted in the entire tween being killed, do NOT flag it as initted or else it may render for one tick.
 },
     _addAliasesToVars = function _addAliasesToVars(targets, vars) {
   var harness = targets[0] ? _getCache(targets[0]).harness : 0,
@@ -31352,7 +31224,7 @@ _initTween = function _initTween(tween, time) {
   return _isFunction(value) ? value.call(tween, i, target, targets) : _isString(value) && ~value.indexOf("random(") ? _replaceRandom(value) : value;
 },
     _staggerTweenProps = _callbackNames + "repeat,repeatDelay,yoyo,repeatRefresh,yoyoEase",
-    _staggerPropsToSkip = (_staggerTweenProps + ",id,stagger,delay,duration,paused").split(",");
+    _staggerPropsToSkip = (_staggerTweenProps + ",id,stagger,delay,duration,paused,scrollTrigger").split(",");
 /*
  * --------------------------------------------------------------------------------------
  * TWEEN
@@ -31385,8 +31257,10 @@ function (_Animation2) {
         overwrite = _this3$vars.overwrite,
         keyframes = _this3$vars.keyframes,
         defaults = _this3$vars.defaults,
+        scrollTrigger = _this3$vars.scrollTrigger,
+        yoyoEase = _this3$vars.yoyoEase,
         parent = _this3.parent,
-        parsedTargets = (_isArray(targets) ? _isNumber(targets[0]) : "length" in vars) ? [targets] : toArray(targets),
+        parsedTargets = (_isArray(targets) || _isTypedArray(targets) ? _isNumber(targets[0]) : "length" in vars) ? [targets] : toArray(targets),
         tl,
         i,
         copy,
@@ -31425,10 +31299,7 @@ function (_Animation2) {
           //users can pass in callbacks like onStart/onComplete in the stagger object. These should fire with each individual tween.
           for (p in stagger) {
             if (~_staggerTweenProps.indexOf(p)) {
-              if (!staggerVarsToMerge) {
-                staggerVarsToMerge = {};
-              }
-
+              staggerVarsToMerge || (staggerVarsToMerge = {});
               staggerVarsToMerge[p] = stagger[p];
             }
           }
@@ -31444,16 +31315,8 @@ function (_Animation2) {
           }
 
           copy.stagger = 0;
-
-          if (staggerVarsToMerge) {
-            _merge(copy, staggerVarsToMerge);
-          }
-
-          if (vars.yoyoEase && !vars.repeat) {
-            //so that propagation works properly when a ancestor timeline yoyos
-            copy.yoyoEase = vars.yoyoEase;
-          }
-
+          yoyoEase && (copy.yoyoEase = yoyoEase);
+          staggerVarsToMerge && _merge(copy, staggerVarsToMerge);
           curTarget = parsedTargets[i]; //don't just copy duration or delay because if they're a string or function, we'd end up in an infinite loop because _isFuncOrString() would evaluate as true in the child tweens, entering this loop, etc. So we parse the value straight from vars and default to 0.
 
           copy.duration = +_parseFuncOrString(duration, _assertThisInitialized(_this3), i, curTarget, parsedTargets);
@@ -31469,7 +31332,7 @@ function (_Animation2) {
           tl.to(curTarget, copy, staggerFunc(i, curTarget, parsedTargets));
         }
 
-        duration = delay = 0;
+        tl.duration() ? duration = delay = 0 : _this3.timeline = 0; // if the timeline's duration is 0, we don't need a timeline internally!
       }
 
       duration || _this3.duration(duration = tl.duration());
@@ -31487,13 +31350,14 @@ function (_Animation2) {
 
     parent && _postAddChecks(parent, _assertThisInitialized(_this3));
 
-    if (immediateRender || !duration && !keyframes && _this3._start === parent._time && _isNotFalse(immediateRender) && _hasNoPausedAncestors(_assertThisInitialized(_this3)) && parent.data !== "nested") {
+    if (immediateRender || !duration && !keyframes && _this3._start === _round(parent._time) && _isNotFalse(immediateRender) && _hasNoPausedAncestors(_assertThisInitialized(_this3)) && parent.data !== "nested") {
       _this3._tTime = -_tinyNum; //forces a render without having to set the render() "force" parameter to true because we want to allow lazying by default (using the "force" parameter always forces an immediate full render)
 
       _this3.render(Math.max(0, -delay)); //in case delay is negative
 
     }
 
+    scrollTrigger && _scrollTrigger(_assertThisInitialized(_this3), scrollTrigger);
     return _this3;
   }
 
@@ -31526,16 +31390,19 @@ function (_Animation2) {
         cycleDuration = dur + this._rDelay;
         time = _round(tTime % cycleDuration); //round to avoid floating point errors. (4 % 0.8 should be 0 but some browsers report it as 0.79999999!)
 
-        if (time > dur || tDur === tTime) {
+        if (tTime === tDur) {
           // the tDur === tTime is for edge cases where there's a lengthy decimal on the duration and it may reach the very end but the time is rendered as not-quite-there (remember, tDur is rounded to 4 decimals whereas dur isn't)
+          iteration = this._repeat;
           time = dur;
-        }
+        } else {
+          iteration = ~~(tTime / cycleDuration);
 
-        iteration = ~~(tTime / cycleDuration);
+          if (iteration && iteration === tTime / cycleDuration) {
+            time = dur;
+            iteration--;
+          }
 
-        if (iteration && iteration === tTime / cycleDuration) {
-          time = dur;
-          iteration--;
+          time > dur && (time = dur);
         }
 
         isYoyo = this._yoyo && iteration & 1;
@@ -31553,20 +31420,27 @@ function (_Animation2) {
         }
 
         if (iteration !== prevIteration) {
-          //timeline && this._yEase && _propagateYoyoEase(timeline, isYoyo);
-          //repeatRefresh functionality
+          timeline && this._yEase && _propagateYoyoEase(timeline, isYoyo); //repeatRefresh functionality
+
           if (this.vars.repeatRefresh && !isYoyo && !this._lock) {
             this._lock = force = 1; //force, otherwise if lazy is true, the _attemptInitTween() will return and we'll jump out and get caught bouncing on each tick.
 
-            this.render(cycleDuration * iteration, true).invalidate()._lock = 0;
+            this.render(_round(cycleDuration * iteration), true).invalidate()._lock = 0;
           }
         }
       }
 
-      if (!this._initted && _attemptInitTween(this, time, force, suppressEvents)) {
-        this._tTime = 0; // in constructor if immediateRender is true, we set _tTime to -_tinyNum to have the playhead cross the starting point but we can't leave _tTime as a negative number.
+      if (!this._initted) {
+        if (_attemptInitTween(this, totalTime < 0 ? totalTime : time, force, suppressEvents)) {
+          this._tTime = 0; // in constructor if immediateRender is true, we set _tTime to -_tinyNum to have the playhead cross the starting point but we can't leave _tTime as a negative number.
 
-        return this;
+          return this;
+        }
+
+        if (dur !== this._dur) {
+          // while initting, a plugin like InertiaPlugin might alter the duration, so rerun from the start to ensure everything renders as it should.
+          return this.render(totalTime, suppressEvents, force);
+        }
       }
 
       this._tTime = tTime;
@@ -31584,10 +31458,7 @@ function (_Animation2) {
         this.ratio = ratio = 1 - ratio;
       }
 
-      if (!prevTime && time && !suppressEvents) {
-        _callback(this, "onStart");
-      }
-
+      time && !prevTime && !suppressEvents && _callback(this, "onStart");
       pt = this._pt;
 
       while (pt) {
@@ -31598,29 +31469,22 @@ function (_Animation2) {
       timeline && timeline.render(totalTime < 0 ? totalTime : !time && isYoyo ? -_tinyNum : timeline._dur * ratio, suppressEvents, force) || this._startAt && (this._zTime = totalTime);
 
       if (this._onUpdate && !suppressEvents) {
-        if (totalTime < 0 && this._startAt) {
-          this._startAt.render(totalTime, true, force); //note: for performance reasons, we tuck this conditional logic inside less traveled areas (most tweens don't have an onUpdate). We'd just have it at the end before the onComplete, but the values should be updated before any onUpdate is called, so we ALSO put it here and then if it's not called, we do so later near the onComplete.
-
-        }
+        totalTime < 0 && this._startAt && this._startAt.render(totalTime, true, force); //note: for performance reasons, we tuck this conditional logic inside less traveled areas (most tweens don't have an onUpdate). We'd just have it at the end before the onComplete, but the values should be updated before any onUpdate is called, so we ALSO put it here and then if it's not called, we do so later near the onComplete.
 
         _callback(this, "onUpdate");
       }
 
-      if (this._repeat) if (iteration !== prevIteration && this.vars.onRepeat && !suppressEvents && this.parent) {
-        _callback(this, "onRepeat");
-      }
+      this._repeat && iteration !== prevIteration && this.vars.onRepeat && !suppressEvents && this.parent && _callback(this, "onRepeat");
 
       if ((tTime === this._tDur || !tTime) && this._tTime === tTime) {
-        if (totalTime < 0 && this._startAt && !this._onUpdate) {
-          this._startAt.render(totalTime, true, force);
-        }
+        totalTime < 0 && this._startAt && !this._onUpdate && this._startAt.render(totalTime, true, true);
+        (totalTime || !dur) && (tTime === this._tDur && this._ts > 0 || !tTime && this._ts < 0) && _removeFromParent(this, 1); // don't remove if we're rendering at exactly a time of 0, as there could be autoRevert values that should get set on the next tick (if the playhead goes backward beyond the startTime, negative totalTime). Don't remove if the timeline is reversed and the playhead isn't at 0, otherwise tl.progress(1).reverse() won't work. Only remove if the playhead is at the end and timeScale is positive, or if the playhead is at 0 and the timeScale is negative.
 
-        (totalTime || !dur) && (totalTime && this._ts > 0 || !tTime && this._ts < 0) && _removeFromParent(this, 1); // don't remove if we're rendering at exactly a time of 0, as there could be autoRevert values that should get set on the next tick (if the playhead goes backward beyond the startTime, negative totalTime). Don't remove if the timeline is reversed and the playhead isn't at 0, otherwise tl.progress(1).reverse() won't work. Only remove if the playhead is at the end and timeScale is positive, or if the playhead is at 0 and the timeScale is negative.
-
-        if (!suppressEvents && !(totalTime < 0 && !prevTime) && !(tTime < tDur && this.timeScale() > 0)) {
+        if (!suppressEvents && !(totalTime < 0 && !prevTime) && (tTime || prevTime)) {
+          // if prevTime and tTime are zero, we shouldn't fire the onReverseComplete. This could happen if you gsap.to(... {paused:true}).play();
           _callback(this, tTime === tDur ? "onComplete" : "onReverseComplete", true);
 
-          this._prom && this._prom();
+          this._prom && !(tTime < tDur && this.timeScale() > 0) && this._prom();
         }
       }
     }
@@ -31653,7 +31517,11 @@ function (_Animation2) {
     }
 
     if (this.timeline) {
-      this.timeline.killTweensOf(targets, vars, _overwritingTween && _overwritingTween.vars.overwrite !== true);
+      var tDur = this.timeline.totalDuration();
+      this.timeline.killTweensOf(targets, vars, _overwritingTween && _overwritingTween.vars.overwrite !== true)._first || _interrupt(this); // if nothing is left tweenng, interrupt.
+
+      this.parent && tDur !== this.timeline.totalDuration() && _setDuration(this, this._dur * this.timeline._tDur / tDur, 0, 1); // if a nested tween is killed that changes the duration, it should affect this tween's duration. We must use the ratio, though, because sometimes the internal timeline is stretched like for keyframes where they don't all add up to whatever the parent tween's duration was set to.
+
       return this;
     }
 
@@ -31670,6 +31538,7 @@ function (_Animation2) {
         i;
 
     if ((!vars || vars === "all") && _arraysMatch(parsedTargets, killingTargets)) {
+      vars === "all" && (this._pt = 0);
       return _interrupt(this);
     }
 
@@ -31723,10 +31592,7 @@ function (_Animation2) {
       }
     }
 
-    if (this._initted && !this._pt && firstPT) {
-      //if all tweening properties are killed, kill the tween. Without this line, if there's a tween with multiple targets and then you killTweensOf() each target individually, the tween would technically still remain active and fire its onComplete even though there aren't any more properties tweening.
-      _interrupt(this);
-    }
+    this._initted && !this._pt && firstPT && _interrupt(this); //if all tweening properties are killed, kill the tween. Without this line, if there's a tween with multiple targets and then you killTweensOf() each target individually, the tween would technically still remain active and fire its onComplete even though there aren't any more properties tweening.
 
     return this;
   };
@@ -31861,11 +31727,7 @@ var _setterPlain = function _setterPlain(target, property, value) {
 
   while (pt) {
     next = pt._next;
-
-    if (pt.p === property) {
-      pt.modifier(modifier, tween, target);
-    }
-
+    pt.p === property && pt.modifier(modifier, tween, target);
     pt = next;
   }
 },
@@ -31966,7 +31828,7 @@ function () {
 
 exports.PropTween = PropTween;
 
-_forEachName(_callbackNames + "parent,duration,ease,delay,overwrite,runBackwards,startAt,yoyo,immediateRender,repeat,repeatDelay,data,paused,reversed,lazy,callbackScope,stringFilter,id,yoyoEase,stagger,inherit,repeatRefresh,keyframes,autoRevert", function (name) {
+_forEachName(_callbackNames + "parent,duration,ease,delay,overwrite,runBackwards,startAt,yoyo,immediateRender,repeat,repeatDelay,data,paused,reversed,lazy,callbackScope,stringFilter,id,yoyoEase,stagger,inherit,repeatRefresh,keyframes,autoRevert,scrollTrigger", function (name) {
   return _reservedProps[name] = 1;
 });
 
@@ -32003,18 +31865,12 @@ var _gsap = {
     return _globalTimeline.getTweensOf(targets, onlyActive);
   },
   getProperty: function getProperty(target, property, unit, uncache) {
-    if (_isString(target)) {
-      //in case selector text or an array is passed in
-      target = toArray(target)[0];
-    }
+    _isString(target) && (target = toArray(target)[0]); //in case selector text or an array is passed in
 
     var getter = _getCache(target || {}).get,
         format = unit ? _passThrough : _numericIfPossible;
 
-    if (unit === "native") {
-      unit = "";
-    }
-
+    unit === "native" && (unit = "");
     return !target ? target : !property ? function (property, unit, uncache) {
       return format((_plugins[property] && _plugins[property].get || getter)(target, property, unit, uncache));
     } : format((_plugins[property] && _plugins[property].get || getter)(target, property, unit, uncache));
@@ -32040,26 +31896,25 @@ var _gsap = {
 
     var Plugin = _plugins[property],
         cache = _getCache(target),
-        setter = Plugin ? function (value) {
+        p = cache.harness && (cache.harness.aliases || {})[property] || property,
+        // in case it's an alias, like "rotate" for "rotation".
+    setter = Plugin ? function (value) {
       var p = new Plugin();
       _quickTween._pt = 0;
       p.init(target, unit ? value + unit : value, _quickTween, 0, [target]);
       p.render(1, p);
       _quickTween._pt && _renderPropTweens(1, _quickTween);
-    } : cache.set(target, property);
+    } : cache.set(target, p);
 
     return Plugin ? setter : function (value) {
-      return setter(target, property, unit ? value + unit : value, cache, 1);
+      return setter(target, p, unit ? value + unit : value, cache, 1);
     };
   },
   isTweening: function isTweening(targets) {
     return _globalTimeline.getTweensOf(targets, true).length > 0;
   },
   defaults: function defaults(value) {
-    if (value && value.ease) {
-      value.ease = _parseEase(value.ease, _defaults.ease);
-    }
-
+    value && value.ease && (value.ease = _parseEase(value.ease, _defaults.ease));
     return _mergeDeep(_defaults, value || {});
   },
   config: function config(value) {
@@ -32075,13 +31930,13 @@ var _gsap = {
       return pluginName && !_plugins[pluginName] && !_globals[pluginName] && _warn(name + " effect requires " + pluginName + " plugin.");
     });
 
-    _effects[name] = function (targets, vars) {
-      return effect(toArray(targets), _setDefaults(vars || {}, defaults));
+    _effects[name] = function (targets, vars, tl) {
+      return effect(toArray(targets), _setDefaults(vars || {}, defaults), tl);
     };
 
     if (extendTimeline) {
       Timeline.prototype[name] = function (targets, vars, position) {
-        return this.add(_effects[name](targets, _isObject(vars) ? vars : (position = vars) && {}), position);
+        return this.add(_effects[name](targets, _isObject(vars) ? vars : (position = vars) && {}, this), position);
       };
     }
   },
@@ -32241,8 +32096,11 @@ var _getPluginPropTween = function _getPluginPropTween(plugin, prop) {
 var gsap = _gsap.registerPlugin({
   name: "attr",
   init: function init(target, vars, tween, index, targets) {
-    for (var p in vars) {
-      this.add(target, "setAttribute", (target.getAttribute(p) || 0) + "", vars[p], index, targets, 0, 0, p); //this.add(target, "setAttribute", (target.getAttribute((p in target.dataset ? (p = "data-" + p) : p)) || 0) + "", vars[p], index, targets, 0, 0, p);
+    var p, pt;
+
+    for (p in vars) {
+      pt = this.add(target, "setAttribute", (target.getAttribute(p) || 0) + "", vars[p], index, targets, 0, 0, p);
+      pt && (pt.op = p);
 
       this._props.push(p);
     }
@@ -32260,7 +32118,7 @@ var gsap = _gsap.registerPlugin({
 
 
 exports.default = exports.gsap = gsap;
-Tween.version = Timeline.version = gsap.version = "3.2.4";
+Tween.version = Timeline.version = gsap.version = "3.5.0";
 _coreReady = 1;
 
 if (_windowExists()) {
@@ -32314,7 +32172,7 @@ exports.checkPrefix = exports._createElement = exports._getBBox = exports.defaul
 var _gsapCore = require("./gsap-core.js");
 
 /*!
- * CSSPlugin 3.2.4
+ * CSSPlugin 3.5.0
  * https://greensock.com
  *
  * Copyright 2008-2020, GreenSock. All rights reserved.
@@ -32418,7 +32276,7 @@ _renderRoundedCSSProp = function _renderRoundedCSSProp(ratio, data) {
   return i < 0 ? null : (i === 3 ? "ms" : i >= 0 ? _prefixes[i] : "") + property;
 },
     _initCore = function _initCore() {
-  if (_windowExists()) {
+  if (_windowExists() && window.document) {
     _win = window;
     _doc = _win.document;
     _docElement = _doc.documentElement;
@@ -32427,7 +32285,7 @@ _renderRoundedCSSProp = function _renderRoundedCSSProp(ratio, data) {
     };
     _tempDivStyler = _createElement("div");
     _transformProp = _checkPropPrefix(_transformProp);
-    _transformOriginProp = _checkPropPrefix(_transformOriginProp);
+    _transformOriginProp = _transformProp + "Origin";
     _tempDiv.style.cssText = "border-width:0;line-height:0;position:absolute;padding:0"; //make sure to override certain properties that may contaminate measurements, in case the user has overreaching style sheets.
 
     _supports3D = !!_checkPropPrefix("perspective");
@@ -32506,7 +32364,7 @@ _removeProperty = function _removeProperty(target, property) {
   if (property) {
     var style = target.style;
 
-    if (property in _transformProps) {
+    if (property in _transformProps && property !== _transformOriginProp) {
       property = _transformProp;
     }
 
@@ -32549,6 +32407,7 @@ _convertToUnit = function _convertToUnit(target, property, value, unit) {
       measureProperty = (isRootSVG ? "client" : "offset") + (horizontal ? "Width" : "Height"),
       amount = 100,
       toPixels = unit === "px",
+      toPercent = unit === "%",
       px,
       parent,
       cache,
@@ -32558,9 +32417,10 @@ _convertToUnit = function _convertToUnit(target, property, value, unit) {
     return curValue;
   }
 
+  curUnit !== "px" && !toPixels && (curValue = _convertToUnit(target, property, value, "px"));
   isSVG = target.getCTM && _isSVG(target);
 
-  if (unit === "%" && (_transformProps[property] || ~property.indexOf("adius"))) {
+  if (toPercent && (_transformProps[property] || ~property.indexOf("adius"))) {
     //transforms and borderRadius are relative to the size of the element itself!
     return (0, _gsapCore._round)(curValue / (isSVG ? target.getBBox()[horizontal ? "width" : "height"] : target[measureProperty]) * amount);
   }
@@ -32578,9 +32438,10 @@ _convertToUnit = function _convertToUnit(target, property, value, unit) {
 
   cache = parent._gsap;
 
-  if (cache && unit === "%" && cache.width && horizontal && cache.time === _gsapCore._ticker.time) {
+  if (cache && toPercent && cache.width && horizontal && cache.time === _gsapCore._ticker.time) {
     return (0, _gsapCore._round)(curValue / cache.width * amount);
   } else {
+    (toPercent || curUnit === "%") && (style.position = _getComputedProperty(target, "position"));
     parent === target && (style.position = "static"); // like for borderRadius, if it's a % we must have it relative to the target itself but that may not have position: relative or position: absolute in which case it'd go up the chain until it finds its offsetParent (bad). position: static protects against that.
 
     parent.appendChild(_tempDiv);
@@ -32588,21 +32449,18 @@ _convertToUnit = function _convertToUnit(target, property, value, unit) {
     parent.removeChild(_tempDiv);
     style.position = "absolute";
 
-    if (horizontal && unit === "%") {
+    if (horizontal && toPercent) {
       cache = (0, _gsapCore._getCache)(parent);
       cache.time = _gsapCore._ticker.time;
       cache.width = parent[measureProperty];
     }
   }
 
-  return (0, _gsapCore._round)(toPixels ? px * curValue / amount : amount / px * curValue);
+  return (0, _gsapCore._round)(toPixels ? px * curValue / amount : px && curValue ? amount / px * curValue : 0);
 },
     _get = function _get(target, property, unit, uncache) {
   var value;
-
-  if (!_pluginInitted) {
-    _initCore();
-  }
+  _pluginInitted || _initCore();
 
   if (property in _propertyAliases && property !== "transform") {
     property = _propertyAliases[property];
@@ -32635,6 +32493,8 @@ _convertToUnit = function _convertToUnit(target, property, value, unit) {
     if (s && s !== start) {
       prop = p;
       start = s;
+    } else if (prop === "borderColor") {
+      start = _getComputedProperty(target, "borderTopColor"); // Firefox bug: always reports "borderColor" as "", so we must fall back to borderTopColor. See https://greensock.com/forums/topic/24583-how-to-return-colors-that-i-had-after-reverse/
     }
   }
 
@@ -32920,6 +32780,7 @@ _identity2DMatrix = [1, 0, 0, 1, 0, 0],
     parent = target.parentNode;
 
     if (!parent || !target.offsetParent) {
+      // note: in 3.3.0 we switched target.offsetParent to _doc.body.contains(target) to avoid [sometimes unnecessary] MutationObserver calls but that wasn't adequate because there are edge cases where nested position: fixed elements need to get reparented to accurately sense transforms. See https://github.com/greensock/GSAP/issues/388 and https://github.com/greensock/GSAP/issues/375
       addedToDOM = 1; //flag
 
       nextSibling = target.nextSibling;
@@ -32929,21 +32790,10 @@ _identity2DMatrix = [1, 0, 0, 1, 0, 0],
     }
 
     matrix = _getComputedTransformMatrixAsArray(target);
-
-    if (temp) {
-      style.display = temp;
-    } else {
-      _removeProperty(target, "display");
-    }
+    temp ? style.display = temp : _removeProperty(target, "display");
 
     if (addedToDOM) {
-      if (nextSibling) {
-        parent.insertBefore(target, nextSibling);
-      } else if (parent) {
-        parent.appendChild(target);
-      } else {
-        _docElement.removeChild(target);
-      }
+      nextSibling ? parent.insertBefore(target, nextSibling) : parent ? parent.appendChild(target) : _docElement.removeChild(target);
     }
   }
 
@@ -33167,9 +33017,9 @@ _identity2DMatrix = [1, 0, 0, 1, 0, 0],
 
     if (cache.svg) {
       //sense if there are CSS transforms applied on an SVG element in which case we must overwrite them when rendering. The transform attribute is more reliable cross-browser, but we can't just remove the CSS ones because they may be applied in a CSS rule somewhere (not just inline).
-      matrix = target.getAttribute("transform");
+      t1 = target.getAttribute("transform");
       cache.forceCSS = target.setAttribute("transform", "") || !_isNullTransform(_getComputedProperty(target, _transformProp));
-      matrix && target.setAttribute("transform", matrix);
+      t1 && target.setAttribute("transform", t1);
     }
   }
 
@@ -33520,10 +33370,7 @@ var CSSPlugin = {
         cache,
         smooth,
         hasPriority;
-
-    if (!_pluginInitted) {
-      _initCore();
-    }
+    _pluginInitted || _initCore();
 
     for (p in vars) {
       if (p === "autoRound") {
@@ -33556,7 +33403,7 @@ var CSSPlugin = {
       } else if (p.substr(0, 2) === "--") {
         //CSS variable
         this.add(style, "setProperty", getComputedStyle(target).getPropertyValue(p) + "", endValue + "", index, targets, 0, 0, p);
-      } else {
+      } else if (type !== "undefined") {
         startValue = _get(target, p);
         startNum = parseFloat(startValue);
         relative = type === "string" && endValue.charAt(1) === "=" ? +(endValue.charAt(0) + "1") : 0;
@@ -33580,10 +33427,7 @@ var CSSPlugin = {
 
           if (p !== "scale" && p !== "transform") {
             p = _propertyAliases[p];
-
-            if (~p.indexOf(",")) {
-              p = p.split(",")[0];
-            }
+            ~p.indexOf(",") && (p = p.split(",")[0]);
           }
         }
 
@@ -33612,9 +33456,7 @@ var CSSPlugin = {
             } else {
               endUnit = parseFloat(endValue.split(" ")[2]) || 0; //handle the zOrigin separately!
 
-              if (endUnit !== cache.zOrigin) {
-                _addNonTweeningPT(this, cache, "zOrigin", cache.zOrigin, endUnit);
-              }
+              endUnit !== cache.zOrigin && _addNonTweeningPT(this, cache, "zOrigin", cache.zOrigin, endUnit);
 
               _addNonTweeningPT(this, style, p, _firstTwoOnly(startValue), _firstTwoOnly(endValue));
             }
@@ -33678,9 +33520,7 @@ var CSSPlugin = {
       }
     }
 
-    if (hasPriority) {
-      (0, _gsapCore._sortPropTweensByPriority)(this);
-    }
+    hasPriority && (0, _gsapCore._sortPropTweensByPriority)(this);
   },
   get: _get,
   aliases: _propertyAliases,
@@ -35332,11 +35172,15 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -35830,11 +35674,15 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -35939,7 +35787,11 @@ var App = function App() {
     href: "https://imgur.com/a/A8BUEB1"
   }, "the Sky Drone "), ", the drone of ", _react.default.createElement("a", {
     href: "https://en.wikipedia.org/wiki/Rog%C3%A9rio_Skylab"
-  }, "Rogerio Skylab."), " ", _react.default.createElement("br", null), "If you don't know who I am, you're missing out. I'm ", _react.default.createElement("a", {
+  }, "Rogerio Skylab."), " ", _react.default.createElement("br", null), "Help me out with kung ", _react.default.createElement("a", {
+    href: "https://ko-fi.com/nidnogg"
+  }, "ko-fi"), " or ", _react.default.createElement("a", {
+    href: "https://www.patreon.com/nidnogg"
+  }, "Patreon"), " ", _react.default.createElement("br", null), "If you don't know who I am, you're missing out. I'm ", _react.default.createElement("a", {
     href: "https://nidnogg.github.io/mood-drone/"
   }, "cu's"), " dad and I rock and I roll. And today is cu day. Awesome! I am a ", _react.default.createElement("a", {
     href: "https://www.youtube.com/watch?v=vb2jP9yb0GQ"
@@ -35949,7 +35801,9 @@ var App = function App() {
     href: "https://soundcloud.com/nidnogg"
   }, "soundcu"), " and the ", _react.default.createElement("a", {
     href: "https://www.youtube.com/watch?v=T6ilsDwLLYQ"
-  }, "cu frontier.")))), _react.default.createElement("div", {
+  }, "cu frontier."), " ", _react.default.createElement("br", null), "Inspired by Docubyte's phenomenal ", _react.default.createElement("a", {
+    href: "https://www.docubyte.com/works/guide-to-computing/"
+  }, "Guide to Computing.")))), _react.default.createElement("div", {
     ref: blur,
     className: "drone-wrapper"
   }, _react.default.createElement(_Drone.default, {
@@ -36017,7 +35871,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60096" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60407" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
